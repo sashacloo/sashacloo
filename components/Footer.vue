@@ -1,18 +1,18 @@
 <template>
   <div class="footer">
-    <a ref="noopener" href="https://www.instagram.com/sashacloo00/" class="link" target="_blank">
+    <a ref="noopener" href="https://www.instagram.com/sashacloo/" class="link" target="_blank">
       IG
     </a>
     &nbsp;
     &nbsp;
     &nbsp;
-    <a ref="noopener" href="https://soundcloud.com/sashacloo00" class="link" target="_blank">
+    <a ref="noopener" href="https://soundcloud.com/sashacloo" class="link" target="_blank">
       Soundcloud
     </a>
     &nbsp;
     &nbsp;
     &nbsp;
-    <a ref="noopener" href="mailto:sashaclootrax@gmail.com" class="link" target="_blank">
+    <a ref="noopener" href="mailto:sasha@cloo.ooo" class="link" target="_blank">
       Email
     </a>
   </div>

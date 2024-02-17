@@ -1,12 +1,12 @@
 <template>
   <div>
-    <a href="https://soundcloud.com/sashacloo00" class="link">
+    <a href="https://soundcloud.com/sashacloo" class="link">
       cloud
     </a>
-    <a href="https://bandcamp.com/sashacloo00" class="link">
+    <a href="https://bandcamp.com/sashacloo" class="link">
       camp
     </a>
-    <a href="https://instagram.com/sashacloo00" class="link">
+    <a href="https://instagram.com/sashacloo" class="link">
       gram
     </a>
   </div>

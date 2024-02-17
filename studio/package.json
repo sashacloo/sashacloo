@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "package.json",
-  "author": "sasha klu <sasha@human-nyc.com>",
+  "author": "sasha klu <me@sashaklu.com>",
   "license": "UNLICENSED",
   "scripts": {
     "start": "sanity start",
