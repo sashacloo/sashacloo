@@ -1,0 +1,25 @@
+:root {
+
+  // colors
+  --color: grey;
+  --accent-color: greenyellow;
+  
+  // gutters
+  --gutter: 30px;
+  --v-gutter: 60px;
+  --header-height: 110px;
+
+  // fonts 
+  --headers: 'racerz';
+  --body: 'concielian';
+  --small: 'Impact';
+
+  // times
+  --fast: 150ms;
+  --slow: 400ms;
+
+  @media (min-width: 1024px) {
+    --gutter: 90px;
+    --v-gutter: 90px;
+  }
+}
