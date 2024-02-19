@@ -1,5 +1,6 @@
 {
   "name": "sashacloo",
+<<<<<<< HEAD
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -51,5 +52,24 @@
   },
   "engines": {
     "node": "16.x"
+=======
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "nuxt": "^3.10.2",
+    "vue": "^3.4.19",
+    "vue-router": "^4.2.5"
+  },
+  "dependencies": {
+    "@nuxtjs/tailwindcss": "^6.11.4",
+    "postcss-simple-vars": "^7.0.1"
+>>>>>>> 3acb38d (deploy to  sashacloo)
   }
 }

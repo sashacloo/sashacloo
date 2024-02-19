@@ -70,7 +70,11 @@ export default {
 }
 </script>
 
+<<<<<<< HEAD
 <style lang="scss" scoped>
+=======
+<style scoped>
+>>>>>>> 3acb38d (deploy to  sashacloo)
 .events-container {
   text-align: right;
   position: fixed;
@@ -83,6 +87,7 @@ export default {
   overflow-y: scroll;
 }
 .events { 
+<<<<<<< HEAD
   // background-color: white;
   // color: greenyellow;
   // bottom: 0;
@@ -93,12 +98,25 @@ export default {
   // position: absolute;
   // top: 50px;
   // width: 300px;
+=======
+  /* background-color: white;
+  color: greenyellow;
+  bottom: 0;
+  display: none;
+  font-size: 12px;
+  right: 0;
+  padding: 4em 1em;
+  position: absolute;
+  top: 50px;
+  width: 300px; */
+>>>>>>> 3acb38d (deploy to  sashacloo)
   z-index: 5;
 
   &:hover {
     display: block;
   }
 
+<<<<<<< HEAD
   @media (min-width: 1024px) {
     // right: 0;
     // width: 300px;
@@ -113,6 +131,22 @@ export default {
   //   margin-bottom: 1em;
   //   padding: 0 10px;
   // }
+=======
+  /* @media (min-width: 1024px) {
+    right: 0;
+    width: 300px;
+    left: 66vw;
+    position: sticky;
+    bottom: 1em;
+    margin-left: 20px;
+  } */
+  
+  /* .upcoming {
+    border: 1px solid; 
+    margin-bottom: 1em;
+    padding: 0 10px;
+  } */
+>>>>>>> 3acb38d (deploy to  sashacloo)
   
   &--title {
     margin-bottom: 0.5em;
@@ -160,11 +194,19 @@ export default {
   top: 10vw;
   right: 2vw;
   display: flex;
+<<<<<<< HEAD
   // height: 100%;
   padding: 0 2.6em;
   user-select: none;
   z-index: 2;
   // filter: blur(0.9px);
+=======
+  height: 100%;
+  padding: 0 2.6em;
+  user-select: none;
+  z-index: 2;
+  filter: blur(0.9px);
+>>>>>>> 3acb38d (deploy to  sashacloo)
   
   &:hover {
     filter: blur(0);

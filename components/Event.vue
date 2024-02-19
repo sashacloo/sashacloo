@@ -21,8 +21,12 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 export default {
   name: 'EventComponent',
+=======
+
+>>>>>>> 3acb38d (deploy to  sashacloo)
   props: {
     eventItem: {
       type: Object,
@@ -41,6 +45,7 @@ export default {
       const today = now.getDate()
       return day === today
     },
+<<<<<<< HEAD
     date(dateTime) {
       const date = new Date(dateTime)
       const year = date.getFullYear()
@@ -79,11 +84,17 @@ export default {
       const strTime = hours + minutes + ampm
       return strTime
     }
+=======
+>>>>>>> 3acb38d (deploy to  sashacloo)
   },
 }
 </script>
 
+<<<<<<< HEAD
 <style lang="scss" scoped>
+=======
+<style scoped>
+>>>>>>> 3acb38d (deploy to  sashacloo)
 .event--inner {
   font-family: var(--tertiary-font);
   line-height: 1.2;
