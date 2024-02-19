@@ -4,17 +4,7 @@
   </h1>
 </template>
 
-<<<<<<< HEAD
-<script>
-export default {
-  name: 'LogoElement',
-}
-</script>
-
-<style lang="scss" scoped>
-=======
 <style scoped>
->>>>>>> 3acb38d (deploy to  sashacloo)
   .logo {
     filter: blur(2px);
     font-size: 11.1vw;
