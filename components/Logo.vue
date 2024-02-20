@@ -1,6 +1,6 @@
 <template>
   <h1 class="logo">
-    sasha&nbsp;cloo
+    sasha cloo
   </h1>
 </template>
 
@@ -11,12 +11,13 @@
     font-family: concielian;
     line-height: 0.34;
     color: grey;
+    width: 100vw;
     height: 0;
     margin: 0;
     mix-blend-mode: difference;
     text-align: center;
     top: 0;
-    position: sticky;
+    position: fixed;
     z-index: 1;
     user-select: none;
 

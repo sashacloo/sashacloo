@@ -1,14 +1,28 @@
 <template>
   <div
-    v-observe-visibility="{
-      callback: visibilityChanged,
-      intersection: { threshold: 0.5 }
-    }"
     class="post"
-  >
+    ref="postWrapper"
+    >
+    <!-- v-observe-visibility="visibilityChanged" -->
+  <!-- v-observe-visibility="{
+    callback: visibilityChanged,
+    intersection: { threshold: 0.5 }
+  }" -->
     <div v-if="post.images" ref="post-image" class="post-image">
-      <img v-for="(image, index) in post.images" :key="index" :src="urlFor(image) + '?w=1600'" class="cover" :alt="post.title" />
+      <SanityImage
+        v-for="(image, index) in post.images" :key="index"
+        :asset-id="image.assetId"
+        auto="format"
+      >
+        <template #default="{ src }">
+          <img
+            :alt="post.title"
+            :src="src"
+          />
+        </template>
+      </SanityImage>
     </div>
+
     <div class="post-content">
       <div class="post-content-wrapper">
         <h6 class="post-date">
@@ -20,83 +34,113 @@
         <!-- <SanityContent v-if="post.body" :blocks="post.body" class="post-body" /> -->
       </div>
     </div>
+    
   </div>
 </template>
 
-<script>
-import imageUrlBuilder from '@sanity/image-url';
+<script setup>
+import { onMounted } from 'vue'
 
-const Flickity =
-  typeof window !== 'undefined'
-    ? require('flickity')
-    : () => null
-
-Flickity.imagesLoaded =
-  typeof window !== 'undefined'
-    ? require('flickity-imagesloaded')
-    : () => null
-    
-Flickity.fade =
-  typeof window !== 'undefined'
-    ? require('flickity-fade')
-    : () => null
-
-export default {
-  name: 'PostElement',
-  props: {
-    post: {
-      type: Object,
-      default: ()=>{}
-    }
-  },
-  methods: {
-    init() {
-      if (!Flickity) {
-        return
-      }
-      this.$flickity = new Flickity(this.$refs.postImage, {
-        pageDots: false,
-        prevNextButtons: false,
-        // cellAlign: 'left',
-        wrapAround: true,
-        imagesLoaded: true,
-        // on: {
-        //   change: (index) => {
-        //     if (this.hasDragged) {
-        //       this.$store.dispatch('global/galleryIndex', index + 1);
-        //     }
-        //   },
-        //   dragStart: () => {
-        //     this.hasDragged = true
-        //   },
-        // },
-      });
-    },
-    visibilityChanged (isVisible, entry) {
-      this.isVisible = isVisible
-      if (isVisible && this.post.color) {
-        document.documentElement.style.backgroundColor = this.post.color
-      }
-    },
-    urlFor(source) {
-      const builder = imageUrlBuilder(this.$sanity.config)
-      return builder.image(source);
-    },
-    date(dateTime) {
-      const date = new Date(dateTime)
-      const year = date.getFullYear()
-      let month = date.getMonth() + 1
-      month = month < 10 ? '0' + month : month
-      let day = date.getDate()
-      day = day < 10 ? '0' + day : day
-      const strDate = year + '-' + month + '-' + day
-      return strDate
-    },
+const props = defineProps({
+  post: {
+    type: Object,
+    default: () => {}
   }
+})
+
+const date = (dateTime) => {
+  const date = new Date(dateTime)
+  const year = date.getFullYear()
+  let month = date.getMonth() + 1
+  month = month < 10 ? '0' + month : month
+  let day = date.getDate()
+  day = day < 10 ? '0' + day : day
+  const strDate = year + '-' + month + '-' + day
+  return strDate
 }
+
+const postWrapper = ref(null)
+
+onMounted(() => {
+  
+  const callback = (entries, observer) => {
+    const entry = entries[0];
+    entry.isIntersecting ? document.documentElement.style.backgroundColor = props.post.color.hex : null
+  }
+
+  const options = {
+    rootMargin: "0px 0px 0px",
+    threshold: 0.5
+  }
+
+  const intersectionObserver = new IntersectionObserver(callback, options);
+
+  // console.log(postWrapper.value);
+
+  intersectionObserver.observe(postWrapper.value);
+})
+
+onUnmounted(() => {
+  intersectionObserver.disconnect();
+
+})
+// const visibilityChanged = (isVisible, entry) => {
+//   isVisible
+//     ? entry.target.classList.add('is-visible')
+//     : entry.target.classList.remove('is-visible')
+// }
+
+
+// const visibilityChanged = (isVisible, entry) => {
+//   this.isVisible = isVisible
+//   if (isVisible && props.post.color) {
+//     console.log('post is visible')
+//     document.documentElement.style.backgroundColor = props.post.color.hex
+//   }
+// }
+
+// onMounted(() => {
+//   console.log('post.color.hex: ', props.post.color.hex)
+// })
+
+// const Flickity =
+//   typeof window !== 'undefined'
+//     ? require('flickity')
+//     : () => null
+
+// Flickity.imagesLoaded =
+//   typeof window !== 'undefined'
+//     ? require('flickity-imagesloaded')
+//     : () => null
+    
+// Flickity.fade =
+//   typeof window !== 'undefined'
+//     ? require('flickity-fade')
+//     : () => null
+
+// if (!Flickity) {
+//   return
+// }
+// this.$flickity = new Flickity(this.$refs.postImage, {
+//   pageDots: false,
+//   prevNextButtons: false,
+//   // cellAlign: 'left',
+//   wrapAround: true,
+//   imagesLoaded: true,
+//   // on: {
+//   //   change: (index) => {
+//   //     if (this.hasDragged) {
+//   //       this.$store.dispatch('global/galleryIndex', index + 1);
+//   //     }
+//   //   },
+//   //   dragStart: () => {
+//   //     this.hasDragged = true
+//   //   },
+//   // },
+// });
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .post {
   position: relative;
   overflow: hidden;

@@ -1,18 +1,29 @@
 <template>
   <div class="page">
 
+    <div class="posts">
+      <Post v-for="(post, index) in posts" :key="index" :post="post" />
+      <!-- <div v-for="(post, index) in posts" :key="index" :post="post" >
+        Post: {{ index }} - {{ post.title }} .
+      </div> -->
+    </div>
 
   </div>
 </template>
 
 <script setup>
-  // import { onMounted } from 'vue'
-  // import { pageQuery, siteSettingsQuery } from '~~/data/queries'
+  import { onMounted } from 'vue'
+  import { postsQuery, siteQuery } from '~~/data/queries'
+  const query = `
+    { 
+      ${postsQuery},
+      ${siteQuery},
+    }
+  `
+  const { data } = await useSanityQuery(query)
 
-  // const { data } = await useSanityQuery(groq`{${pageQuery}}`, { slug: 'homepage' })
-  // const { data: siteData } = await useSanityQuery(groq`{${siteSettingsQuery}}`)
+  const { posts, site } = data?.value
 
-  // const { page } = data?._rawValue
 
   // const { siteSettings } = siteData?.value
 
@@ -24,10 +35,13 @@
   // useState('color', () => page.color.hex)
   // useState('bgColor', () => page.bgColor.hex)
 
-  // onMounted(() => {
-  //   document.documentElement.style.backgroundColor = page.bgColor.hex
-  //   document.documentElement.style.color = page.color.hex
-  // })
+  onMounted(() => {
+    // console.log(posts)
+    // console.log('site:', site.title)
+    // document.documentElement.style.opacity = 1
+    // document.documentElement.style.backgroundColor = page.bgColor.hex
+    // document.documentElement.style.color = page.color.hex
+  })
 
   useHead(() => {
     return {
@@ -35,13 +49,13 @@
       meta: [
         { hid: 'description', name: 'description', content: 'welcome to the world of cloo' },
       ],
-      // link: {rel: 'icon', type: 'icon/x-icon', href: 'icon.png'}
+      link: {rel: 'icon', type: 'icon/x-icon', href: 'icon.png'}
     }
   })
 </script>
 
 <style scoped>
 .page {
-  /* @apply bg-[#00ff00] flex flex-col justify-between items-center text-center min-h-[calc(90vh_-_60px)] 1000:min-h-[calc(100vh_-_60px)]; */
+  @apply flex flex-col justify-between items-center;
 }
 </style>

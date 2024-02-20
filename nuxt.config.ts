@@ -6,16 +6,19 @@ export default defineNuxtConfig({
     '@/assets/css/main.css',
   ],
   modules: [
-    // '@nuxtjs/sanity',
+    '@nuxtjs/sanity',
     '@nuxtjs/tailwindcss',
     // '@pinia/nuxt'
   ],
+  // plugins: [
+  //   { src: '@/plugins/vue-observe-visibility.ts' }
+  // ],
   postcss: {
     plugins: {
       "postcss-simple-vars": {},
     },
   },
-  // sanity: {
-  //   projectId: ''
-  // },
+  sanity: {
+    projectId: '1ql581l8'
+  },
 })
