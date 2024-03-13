@@ -12,7 +12,6 @@
   /* @apply bg-[#ff00ff] flex flex-col justify-center items-center text-center p-2; */
     
   a {
-    text-transform: uppercase;
     text-decoration: none;
   }
 }

@@ -1,7 +1,9 @@
 <template>
-  <h1 class="logo">
-    sasha cloo
-  </h1>
+  <NuxtLink to="/" class="logo">
+    <h1>
+      sasha cloo
+    </h1>
+  </NuxtLink>
 </template>
 
 <style scoped>
@@ -17,6 +19,7 @@
     mix-blend-mode: difference;
     text-align: center;
     top: 0;
+    left: 0;
     position: fixed;
     z-index: 1;
     user-select: none;

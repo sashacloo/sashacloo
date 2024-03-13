@@ -37,6 +37,12 @@ export default {
       title: 'Body',
       type: 'blockContent',
     },
+    {
+      name: 'posts',
+      title: 'Posts',
+      type: 'array',
+      of: [{type: 'reference', to: {type: 'post'}}],
+    },
   ],
 
   preview: {
@@ -45,11 +51,11 @@ export default {
       images: 'images'
     },
     prepare: ({title, images}) => {
-      const media = images && images.length > 0 ? images[0] : null;
+      const media = images && typeof images !== "undefined" && images.length > 0 ? images[0] : null;
       return {
         title: title,
         media: media
       };
     }
-  },
+  }
 }

@@ -17,8 +17,7 @@ const linkQuery = `{
     'slug': reference->slug.current,
   }
 }`
-export const postsQuery = `
-'posts': *[_type == 'post'] | order(publishedAt desc){
+export const postQuery = `{
   ...,
   slides[]{
     ...,
@@ -30,6 +29,9 @@ export const postsQuery = `
   },
   images[]${imageQuery},
 }`
+export const postsQuery = `
+  'posts': *[_type == 'post'] | order(publishedAt desc)${postQuery}
+`
 export const pageQuery = `
   'page': *[_type == 'page' && slug.current == $slug][0]{
     ...,
@@ -39,6 +41,7 @@ export const pageQuery = `
       image${imageQuery},
       video${videoQuery}
     },
+    posts[]->${postQuery}
   }
 `
 export const siteQuery = `

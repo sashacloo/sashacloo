@@ -1,13 +1,8 @@
 <template>
   <div class="page">
-
     <div class="posts">
       <Post v-for="(post, index) in posts" :key="index" :post="post" />
-      <!-- <div v-for="(post, index) in posts" :key="index" :post="post" >
-        Post: {{ index }} - {{ post.title }} .
-      </div> -->
     </div>
-
   </div>
 </template>
 

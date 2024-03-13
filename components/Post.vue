@@ -2,12 +2,7 @@
   <div
     class="post"
     ref="postWrapper"
-    >
-    <!-- v-observe-visibility="visibilityChanged" -->
-  <!-- v-observe-visibility="{
-    callback: visibilityChanged,
-    intersection: { threshold: 0.5 }
-  }" -->
+  >
     <div v-if="post.images" ref="post-image" class="post-image">
       <SanityImage
         v-for="(image, index) in post.images" :key="index"
@@ -74,34 +69,12 @@ onMounted(() => {
   }
 
   const intersectionObserver = new IntersectionObserver(callback, options);
-
-  // console.log(postWrapper.value);
-
   intersectionObserver.observe(postWrapper.value);
 })
 
 onUnmounted(() => {
   intersectionObserver.disconnect();
-
 })
-// const visibilityChanged = (isVisible, entry) => {
-//   isVisible
-//     ? entry.target.classList.add('is-visible')
-//     : entry.target.classList.remove('is-visible')
-// }
-
-
-// const visibilityChanged = (isVisible, entry) => {
-//   this.isVisible = isVisible
-//   if (isVisible && props.post.color) {
-//     console.log('post is visible')
-//     document.documentElement.style.backgroundColor = props.post.color.hex
-//   }
-// }
-
-// onMounted(() => {
-//   console.log('post.color.hex: ', props.post.color.hex)
-// })
 
 // const Flickity =
 //   typeof window !== 'undefined'

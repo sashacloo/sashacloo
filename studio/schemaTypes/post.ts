@@ -56,7 +56,7 @@ export default {
       images: 'images'
     },
     prepare: ({title, images}) => {
-      const media = images && images.length > 0 ? images[0] : null;
+      const media = images && typeof images !== "undefined" && images.length > 0 ? images[0] : null;
       return {
         title: title,
         media: media

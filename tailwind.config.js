@@ -26,8 +26,10 @@ module.exports = {
     },
     colors: {
       black: '#000000',
+      darkgrey: '#333333',
       current: 'currentColor',
       transparent: 'transparent',
+      grey: '#888888',
       white: '#FFFFFF',
     },
     container: {
