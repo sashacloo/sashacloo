@@ -3,9 +3,27 @@
     <h2>
       {{ page.title }}
     </h2>
+
+    <div class="images">
+      <SanityImage
+        v-for="(image, index) in page.images" :key="index"
+        :asset-id="image.assetId"
+        auto="format"
+      >
+        <template #default="{ src }">
+          <img
+            :alt="image.imageCaption"
+            class="image"
+            :src="src"
+          />
+        </template>
+      </SanityImage>
+    </div>
+
     <div class="posts">
       <Post v-for="(post, index) in page.posts" :key="index" :post="post" />
     </div>
+
   </div>
 </template>
 
@@ -49,6 +67,13 @@
   }
   .posts {
     @apply -mt-20;
+  }
+  .images {
+    @apply flex flex-col justify-between items-center;
+  }
+  .image {
+    @apply mb-[25vh];
+    max-height: 100vh;
   }
 }
 </style>
