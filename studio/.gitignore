@@ -27,3 +27,16 @@
 
 # Dotenv and similar local-only files
 *.local
+
+
+# Yarn files to ignore
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+.yarn/build-state.yml
+.yarn/unplugged/

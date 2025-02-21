@@ -19,7 +19,7 @@ const linkQuery = `{
 }`
 export const postQuery = `{
   ...,
-  slides[]{
+  mediaItems[]{
     ...,
     _type == 'imageObject' => ${imageQuery},
     _type == 'videoObject' => {

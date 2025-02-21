@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="header z-100">
     <Logo />
     <!-- <Events :events="eventsAll.future" :events-past="eventsAll.past" />
     <Links /> -->

@@ -2,10 +2,28 @@ export default {
   title: 'Site',
   name: 'site',
   type: 'document',
+  groups: [
+    {
+      default: true,
+      name: 'header',
+      title: 'Header',
+    },
+    {
+      default: false,
+      name: 'footer',
+      title: 'Footer',
+    },
+    {
+      default: false,
+      name: 'seo',
+      title: 'SEO',
+    },
+  ],
   fields: [
     {
       name: 'title',
       title: 'Title',
+      group: 'seo',
       type: 'string',
       description: "Your website's name. Should be under 60 characters.",
       validation: Rule => Rule.max(60).warning('Should be under 60 characters.'),
@@ -13,6 +31,7 @@ export default {
     {
       name: 'description',
       title: 'Description',
+      group: 'seo',      
       type: 'string',
       description: "A short summary of what to expect when visiting your website. Should be under 160 characters.",
       validation: Rule => Rule.max(160).warning('Should be under 160 characters.'),
@@ -20,6 +39,7 @@ export default {
     {
       name: 'url',
       title: 'Website URL',
+      group: 'seo',      
       type: 'url',
       description: 'The address people will type in to get to your website.',
     },
@@ -27,6 +47,7 @@ export default {
       name: 'image',
       title: 'Image',
       type: 'image',
+      group: 'seo',      
       description:
         'This image is the first thing people will see when someone shares your website. Recommended size 1200x630 (will be auto resized).',
     },
@@ -34,7 +55,33 @@ export default {
       name: 'appID',
       title: 'Facebook App ID',
       type: 'string',
+      group: 'seo',      
       description: "Your Facebook App ID can be found by clicking \"Settings\" then \"Basic\" in the navigation menu on the left side of your Facebook App page.",
+    },
+    {
+      name: 'header',
+      title: 'Header',
+      type: 'object',
+      group: 'header',
+      fields: [
+        {
+          name: 'links',
+          title: 'Navigtion Links',
+          type: 'array',
+          of: [
+            { type: 'linkObject' },
+            { type: 'internalLink' },
+            { type: 'anchorLink' },
+          ]
+        }
+      ],
+      validation: (Rule) => Rule.required(),
+    },
+    {
+      name: 'footer',
+      title: 'Footer',
+      group: 'footer',
+      type: 'footer',
     },
   ],
 }

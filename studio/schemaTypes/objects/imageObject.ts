@@ -8,7 +8,7 @@ export default {
       title: 'Image Caption',
       type: 'blockContent',
       description: 'Important for SEO and accessibility.',
-      validation: Rule => Rule.error('You have to fill out the alternative text.').required(),
+      validation: (Rule: any) => Rule.error('You have to fill out the alternative text.').required(),
       options: {
         isHighlighted: true
       }

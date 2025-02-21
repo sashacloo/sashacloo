@@ -4,20 +4,22 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "dev": "CHOKIDAR_USEPOLLING=true yarn nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
-    "nuxt": "^3.10.2",
-    "vue": "^3.4.19",
-    "vue-router": "^4.2.5"
+    "nuxt": "^3.14.0",
+    "vue": "latest",
+    "vue-router": "latest"
   },
   "dependencies": {
-    "@nuxtjs/sanity": "^1.8.3",
-    "@nuxtjs/tailwindcss": "^6.11.4",
+    "@nuxtjs/sanity": "^1.12.2",
+    "@nuxtjs/tailwindcss": "^6.12.1",
     "postcss-simple-vars": "^7.0.1",
+    "styled-components": "^5.3.6",
     "vue-observe-visibility": "^1.0.0"
-  }
+  },
+  "packageManager": "yarn@4.5.0"
 }

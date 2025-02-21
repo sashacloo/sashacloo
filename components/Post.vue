@@ -1,48 +1,71 @@
 <template>
   <div
-    class="post"
+    class="post min-h-[70vh] flex items-center justify-center"
+    :class="[{ large: post.large }]"
     ref="postWrapper"
+    v-bind="filteredAttrs"
   >
-    <div v-if="post.images" ref="post-image" class="post-image">
+    <!-- <div :class="['mediaItem', 'flex', 'items-center', 'justify-center', mediaItem._type]"> -->
+    <div
+      v-for="(mediaItem, index) in post.mediaItems" :key="index"
+      :class="['mediaItem', mediaItem._type]"
+    >
+
       <SanityImage
-        v-for="(image, index) in post.images" :key="index"
-        :asset-id="image.assetId"
+        v-if="mediaItem._type == 'imageObject'"
+        :asset-id="mediaItem.assetId"
         auto="format"
       >
         <template #default="{ src }">
           <img
-            :alt="post.title"
+            :alt="mediaItem.caption"
             :src="src"
           />
         </template>
       </SanityImage>
-    </div>
 
-    <div class="post-content">
-      <div class="post-content-wrapper">
-        <h6 class="post-date">
-          {{ date(post.publishedAt) }}
-        </h6>
-        <h2 class="post-title">
-          {{ post.title }}
-        </h2>
-        <!-- <SanityContent v-if="post.body" :blocks="post.body" class="post-body" /> -->
+      <VideoPlayer
+        v-else-if="mediaItem._type == 'videoObject'"
+        :src="mediaItem.video.asset.url"
+        :soundToggle="mediaItem.soundToggle"
+        :poster="mediaItem.image"
+        :autoplay="true"
+        :loop="true"
+        :muted="true"
+      />
+
+      <div v-if="mediaItem.body">
+        <SanityContent :blocks="mediaItem.body" />
       </div>
+
+    </div>
+    
+    <div class="post-content">
+      <h6 class="post-date">
+        {{ date(post.publishedAt) }}
+      </h6>
+      <h2 class="post-title">
+        {{ post.title }}
+      </h2>
+      <!-- <SanityContent v-if="post.body" :blocks="post.body" class="post-body" /> -->
     </div>
     
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { useAttrs, computed } from 'vue';
 
 const props = defineProps({
-  post: {
-    type: Object,
-    default: () => {}
-  }
-})
+  post: Object
+});
 
+const attrs = useAttrs();
+
+const filteredAttrs = computed(() => {
+  const { "data-v-inspector": _, ...rest } = attrs;
+  return rest;
+});
 const date = (dateTime) => {
   const date = new Date(dateTime)
   const year = date.getFullYear()
@@ -116,8 +139,36 @@ onUnmounted(() => {
 <style lang="postcss" scoped>
 .post {
   position: relative;
-  overflow: hidden;
+  /* width: 100vw; */
+  
+  @media (min-width: 1024px) {
+    width: 70vw;
+    margin: auto; 
 
+    .mediaItem {
+      position: relative;
+      margin: 10vh 0;
+      
+      img, video {
+        max-width: 100%;
+        max-height: 100vh;
+        object-fit: contain;
+      }
+    }
+
+    &.large {
+      width: 100vw;
+      
+      .mediaItem {
+        margin: 0;
+      }
+    }
+  }
+
+
+
+
+/* 
   &-image {
     overflow: hidden;
     height: 100vh;
@@ -143,44 +194,38 @@ onUnmounted(() => {
       height: 56.3vw;
     }
   }
+  */
 
   &-content {
-    position: absolute;
-    top: 20%;
-    bottom: 20%;
-    left: 15%;
-    right: 15%;
-
-    &-wrapper {
-      filter: blur(0.5px);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      box-sizing: border-box;
-      border-radius: 0 1em;
-      bottom: 0;
-      right: 0;
-      width: 100%;
-      overflow: hidden;
-      padding: 0.5em 1em;
-      pointer-events: none;
-      position: fixed;
-      text-align: left;
-      font-size: 13px;
-      color: grey;
-      transition: opacity .2s;
-      opacity: 0;
+    /* filter: blur(0.5px); */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+    /* border-radius: 0 1em; */
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    overflow: hidden;
+    padding: 0.5em 1em;
+    pointer-events: none;
+    position: fixed;
+    text-align: left;
+    font-size: 13px;
+    font-family: Helvetica, Arial, sans-serif;
+    color: grey;
+    transition: opacity .2s;
+    opacity: 0;
+    z-index: 50;
 
 
-      @media (min-width: 1024px) {
-        
-        :hover > & {
-          opacity: 100%;
-          mix-blend-mode: difference;
-        }
+    @media (min-width: 1024px) {
+      
+      :hover > & {
+        opacity: 100%;
+        mix-blend-mode: difference;
       }
     }
   }
 }
-
 </style>

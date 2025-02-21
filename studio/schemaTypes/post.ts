@@ -18,10 +18,20 @@ export default {
       },
     },
     {
-      name: 'images',
-      title: 'Image(s)',
+      name: 'mediaItems',
+      title: 'Content blocks',
+      description: 'Projects, images, videos',
       type: 'array',
-      of: [{type: 'imageObject'}]
+      of: [
+        {type: 'imageObject'},
+        {type: 'videoObject'}
+      ],
+    },
+    {
+      name: 'large',
+      title: 'make media items large',
+      type: 'boolean',
+      initialValue: false
     },
     {
       name: 'color',
@@ -55,8 +65,8 @@ export default {
       title: 'title',
       images: 'images'
     },
-    prepare: ({title, images}) => {
-      const media = images && typeof images !== "undefined" && images.length > 0 ? images[0] : null;
+    prepare: ({title, mediaItems}: { title: string, mediaItems?: any[] }) => {
+      const media = mediaItems && mediaItems.length > 0 ? mediaItems[0] : null;
       return {
         title: title,
         media: media

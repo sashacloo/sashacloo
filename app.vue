@@ -1,6 +1,6 @@
 <template>
   <NuxtLayout>
-    <NuxtPage />
+    <NuxtPage data-v-inspector="false" />
   </NuxtLayout>
 </template>
 

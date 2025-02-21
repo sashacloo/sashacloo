@@ -1,14 +1,31 @@
-import blockContent from './blockContent'
+import anchorLink from './objects/anchorLink'
+import blockContent from './objects/blockContent'
+import footer from './objects/footer'
+import header from './objects/header'
+import imageObject from './objects/imageObject'
+import internalLink from "./objects/internalLink"
+import linkObject from "./objects/linkObject"
+import projectObject from './objects/projectObject'
+import videoObject from './objects/videoObject'
+
 import category from './category'
-import imageObject from './imageObject'
 import page from './page'
 import post from './post'
 import site from './site'
 
 export const schemaTypes = [
+
+  anchorLink,
   blockContent,
-  category,
+  footer,
+  header,
   imageObject,
+  internalLink,
+  linkObject,
+  projectObject,
+  videoObject,
+  
+  category,
   page,
   post,
   site
