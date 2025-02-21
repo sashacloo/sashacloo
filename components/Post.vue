@@ -1,7 +1,7 @@
 <template>
   <div
-    class="post min-h-[70vh] flex items-center justify-center"
-    :class="[{ large: post.large }]"
+    class="post flex items-center justify-center"
+    :class="[{ large: post.large }, {'in-grid': grid}]"
     ref="postWrapper"
     v-bind="filteredAttrs"
   >
@@ -41,108 +41,111 @@
     </div>
     
     <div class="post-content">
-      <h6 class="post-date">
-        {{ date(post.publishedAt) }}
-      </h6>
-      <h2 class="post-title">
-        {{ post.title }}
-      </h2>
-      <!-- <SanityContent v-if="post.body" :blocks="post.body" class="post-body" /> -->
+        <h6 class="post-date">
+          {{ date(post.publishedAt) }}
+        </h6>
+        <h2 class="post-title">
+          {{ post.title }}
+        </h2>
+        <!-- <SanityContent v-if="post.body" :blocks="post.body" class="post-body" /> -->
     </div>
     
   </div>
 </template>
 
 <script setup>
-import { useAttrs, computed } from 'vue';
+  const grid = useState('grid') 
 
-const props = defineProps({
-  post: Object
-});
+  import { useAttrs, computed } from 'vue';
 
-const attrs = useAttrs();
+  const props = defineProps({
+    post: Object
+  });
 
-const filteredAttrs = computed(() => {
-  const { "data-v-inspector": _, ...rest } = attrs;
-  return rest;
-});
-const date = (dateTime) => {
-  const date = new Date(dateTime)
-  const year = date.getFullYear()
-  let month = date.getMonth() + 1
-  month = month < 10 ? '0' + month : month
-  let day = date.getDate()
-  day = day < 10 ? '0' + day : day
-  const strDate = year + '-' + month + '-' + day
-  return strDate
-}
+  const attrs = useAttrs();
 
-const postWrapper = ref(null)
-
-onMounted(() => {
-  
-  const callback = (entries, observer) => {
-    const entry = entries[0];
-    entry.isIntersecting ? document.documentElement.style.backgroundColor = props.post.color.hex : null
+  const filteredAttrs = computed(() => {
+    const { "data-v-inspector": _, ...rest } = attrs;
+    return rest;
+  });
+  const date = (dateTime) => {
+    const date = new Date(dateTime)
+    const year = date.getFullYear()
+    let month = date.getMonth() + 1
+    month = month < 10 ? '0' + month : month
+    let day = date.getDate()
+    day = day < 10 ? '0' + day : day
+    const strDate = year + '-' + month + '-' + day
+    return strDate
   }
 
-  const options = {
-    rootMargin: "0px 0px 0px",
-    threshold: 0.5
-  }
+  const postWrapper = ref(null)
 
-  const intersectionObserver = new IntersectionObserver(callback, options);
-  intersectionObserver.observe(postWrapper.value);
-})
-
-onUnmounted(() => {
-  intersectionObserver.disconnect();
-})
-
-// const Flickity =
-//   typeof window !== 'undefined'
-//     ? require('flickity')
-//     : () => null
-
-// Flickity.imagesLoaded =
-//   typeof window !== 'undefined'
-//     ? require('flickity-imagesloaded')
-//     : () => null
+  onMounted(() => {
     
-// Flickity.fade =
-//   typeof window !== 'undefined'
-//     ? require('flickity-fade')
-//     : () => null
+    const callback = (entries, observer) => {
+      const entry = entries[0];
+      entry.isIntersecting ? document.documentElement.style.backgroundColor = props.post.color.hex : null
+    }
 
-// if (!Flickity) {
-//   return
-// }
-// this.$flickity = new Flickity(this.$refs.postImage, {
-//   pageDots: false,
-//   prevNextButtons: false,
-//   // cellAlign: 'left',
-//   wrapAround: true,
-//   imagesLoaded: true,
-//   // on: {
-//   //   change: (index) => {
-//   //     if (this.hasDragged) {
-//   //       this.$store.dispatch('global/galleryIndex', index + 1);
-//   //     }
-//   //   },
-//   //   dragStart: () => {
-//   //     this.hasDragged = true
-//   //   },
-//   // },
-// });
+    const options = {
+      rootMargin: "0px 0px 0px",
+      threshold: 0.5
+    }
+
+    const intersectionObserver = new IntersectionObserver(callback, options);
+    intersectionObserver.observe(postWrapper.value);
+  })
+
+  onUnmounted(() => {
+    intersectionObserver.disconnect();
+  })
+
+  // const Flickity =
+  //   typeof window !== 'undefined'
+  //     ? require('flickity')
+  //     : () => null
+
+  // Flickity.imagesLoaded =
+  //   typeof window !== 'undefined'
+  //     ? require('flickity-imagesloaded')
+  //     : () => null
+      
+  // Flickity.fade =
+  //   typeof window !== 'undefined'
+  //     ? require('flickity-fade')
+  //     : () => null
+
+  // if (!Flickity) {
+  //   return
+  // }
+  // this.$flickity = new Flickity(this.$refs.postImage, {
+  //   pageDots: false,
+  //   prevNextButtons: false,
+  //   // cellAlign: 'left',
+  //   wrapAround: true,
+  //   imagesLoaded: true,
+  //   // on: {
+  //   //   change: (index) => {
+  //   //     if (this.hasDragged) {
+  //   //       this.$store.dispatch('global/galleryIndex', index + 1);
+  //   //     }
+  //   //   },
+  //   //   dragStart: () => {
+  //   //     this.hasDragged = true
+  //   //   },
+  //   // },
+  // });
 </script>
 
 <style lang="postcss" scoped>
 .post {
   position: relative;
-  /* width: 100vw; */
+
   
   @media (min-width: 1024px) {
     width: 70vw;
+    transition: all 0.5s;
     margin: auto; 
 
     .mediaItem {
@@ -151,18 +154,32 @@ onUnmounted(() => {
       
       img, video {
         max-width: 100%;
-        max-height: 100vh;
+        max-height: 100%;
         object-fit: contain;
       }
     }
 
-    &.large {
+    &.large:not(.in-grid) {
       width: 100vw;
       
       .mediaItem {
         margin: 0;
       }
     }
+
+    &.in-grid {
+      @apply w-[20vw] h-[20vw] overflow-hidden;
+
+      .mediaItem {
+        margin: 0;
+        padding: 2vw;
+        height: 100%;
+        display: flex;
+        align-items: center;
+      }
+    }
+
+
   }
 
 

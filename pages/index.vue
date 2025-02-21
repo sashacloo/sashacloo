@@ -1,12 +1,15 @@
 <template>
   <div class="page">
-    <div class="posts">
+    <div :class="['posts', {'in-grid': grid}, {'blur': blur}]">
       <Post v-for="(post, index) in posts" :key="index" :post="post" />
     </div>
   </div>
 </template>
 
 <script setup>
+  const grid = useState('grid') 
+  const blur = useState('blur') 
+  
   import { onMounted } from 'vue'
   import { postsQuery, siteQuery } from '~~/data/queries'
   const query = `
@@ -18,6 +21,7 @@
   const { data } = await useSanityQuery(query)
 
   const { posts, site } = data?.value
+
 
 
   // const { siteSettings } = siteData?.value
@@ -49,8 +53,20 @@
   })
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .page {
   @apply flex flex-col justify-between items-center;
+  
+  .posts {
+    transition: all 0.5s;
+
+    &.in-grid {
+      @apply grid grid-cols-5;
+    }
+    &.blur {
+      filter: blur(20px);
+      transition: none;
+    }
+  }
 }
 </style>

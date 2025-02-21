@@ -55,7 +55,7 @@
   })
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .page {
   @apply flex flex-col justify-between items-center;
 
