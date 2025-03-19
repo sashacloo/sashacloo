@@ -61,7 +61,7 @@
     transition: all 0.5s;
 
     &.in-grid {
-      @apply grid grid-cols-5;
+      @apply grid grid-cols-5 pt-[10vh];
     }
     &.blur {
       filter: blur(20px);

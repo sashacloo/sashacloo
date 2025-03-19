@@ -1,9 +1,11 @@
 <template>
-  <NuxtLink to="/" class="logo">
+  <!-- <NuxtLink to="/" class="logo"> -->
+  <div class="logo">
     <h1>
       sasha cloo
     </h1>
-  </NuxtLink>
+  </div>
+  <!-- </NuxtLink> -->
 </template>
 
 <style scoped>

@@ -1,7 +1,7 @@
 <template>
   <div class="header z-100 flex items-center justify-between bg-gray-200">
     <Logo />
-    <!-- <button @click="handleGrid" class="button button-grid">{{ grid ? 'list' : 'grid' }}</button> -->
+    <button @click="handleGrid" class="button button-grid">{{ grid ? 'list' : 'grid' }}</button>
 
     <button class="button button-contact" @click="handleClick">
       {{ contactText }}

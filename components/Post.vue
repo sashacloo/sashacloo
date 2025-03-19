@@ -144,13 +144,14 @@
 
   
   @media (min-width: 1024px) {
-    width: 70vw;
+    width: 50vw;
+    min-height: 50vh;
     transition: all 0.5s;
     margin: auto; 
 
     .mediaItem {
       position: relative;
-      margin: 10vh 0;
+      margin: 20vh 0;
       
       img, video {
         max-width: 100%;
@@ -161,6 +162,8 @@
 
     &.large:not(.in-grid) {
       width: 100vw;
+      height: auto;
+      /* max-height: none; */
       
       .mediaItem {
         margin: 0;
@@ -169,6 +172,7 @@
 
     &.in-grid {
       @apply w-[20vw] h-[20vw] overflow-hidden;
+      min-height: none;
 
       .mediaItem {
         margin: 0;
