@@ -61,7 +61,7 @@ const copyToClipboard = (text) => {
     text-decoration: none;
   }
   .button {
-    @apply fixed top-[10vw] 1000:top-[6.5vw];
+    @apply fixed top-[9vw] 1000:top-[6.5vw];
     filter: blur(0.5px);
     font-size: 11px;
     font-family: Arial, Helvetica, sans-serif;

@@ -13,7 +13,7 @@
     filter: blur(2px);
     font-size: 11.1vw;
     font-family: concielian;
-    line-height: 0.34;
+    line-height: 0.5;
     color: grey;
     width: 100vw;
     height: 0;
@@ -25,8 +25,9 @@
     position: fixed;
     z-index: 1;
     user-select: none;
-
+    
     @media (min-width: 1024px) {
+      line-height: 0.34;
       filter: blur(6px);
     }
   }

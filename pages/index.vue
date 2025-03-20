@@ -58,14 +58,17 @@
   @apply flex flex-col justify-between items-center;
   
   .posts {
-    @apply pt-[12vw] 1000:pt-0;
+    @apply pt-[15vw] 1000:pt-[8vw];
     transition: all 0.5s;
 
+    &:not(.in-grid) {
+      @apply 1000:pt-0;
+    }
     &.in-grid {
       @apply grid grid-cols-4 1000:grid-cols-5;
     }
     &.blur {
-      filter: blur(20px);
+      /* filter: blur(20px); */
       transition: none;
     }
   }
