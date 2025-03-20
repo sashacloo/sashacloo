@@ -1,6 +1,7 @@
 <template>
   <div class="video-container">
-    <video
+    <video 
+      playsinline
       ref="video"
       :src="src"
       :poster="poster"

@@ -61,9 +61,8 @@ const copyToClipboard = (text) => {
     text-decoration: none;
   }
   .button {
+    @apply fixed top-[10vw] 1000:top-[6.5vw];
     filter: blur(0.5px);
-    position: fixed;
-    top: 6.5vw;
     font-size: 11px;
     font-family: Arial, Helvetica, sans-serif;
     background-color: #c8c8c888;
@@ -77,10 +76,10 @@ const copyToClipboard = (text) => {
     /* transform: translateX(-50%); */
 
     &-grid {
-      left: 1.5vw;
+      @apply left-[2vw] 1000:left-[1.5vw];
     }
     &-contact {
-      right: 1.5vw;
+      @apply right-[2vw] 1000:right-[1.5vw];
     }
     &:hover {
       background-color: #51ff0088;

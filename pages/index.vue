@@ -58,10 +58,11 @@
   @apply flex flex-col justify-between items-center;
   
   .posts {
+    @apply pt-[12vw] 1000:pt-0;
     transition: all 0.5s;
 
     &.in-grid {
-      @apply grid grid-cols-5 pt-[10vh];
+      @apply grid grid-cols-4 1000:grid-cols-5;
     }
     &.blur {
       filter: blur(20px);

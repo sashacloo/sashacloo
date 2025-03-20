@@ -141,53 +141,46 @@
 <style lang="postcss" scoped>
 .post {
   position: relative;
+  transition: all 0.5s;
+  width: 80vw;
+  margin: auto; 
 
-  
   @media (min-width: 1024px) {
     width: 50vw;
     min-height: 50vh;
-    transition: all 0.5s;
-    margin: auto; 
-
-    .mediaItem {
-      position: relative;
-      margin: 20vh 0;
-      
-      img, video {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-      }
+  }
+  .mediaItem {
+    @apply relative my-[30vw] 1000:my-[20vw];
+    
+    img, video {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
     }
-
-    &.large:not(.in-grid) {
-      width: 100vw;
-      height: auto;
-      /* max-height: none; */
-      
-      .mediaItem {
-        margin: 0;
-      }
-    }
-
-    &.in-grid {
-      @apply w-[20vw] h-[20vw] overflow-hidden;
-      min-height: none;
-
-      .mediaItem {
-        margin: 0;
-        padding: 2vw;
-        height: 100%;
-        display: flex;
-        align-items: center;
-      }
-    }
-
-
   }
 
+  &.large:not(.in-grid) {
+    width: 100vw;
+    height: auto;
+    
+    .mediaItem {
+      @apply 1000:my-0;
+    }
+  }
 
+  &.in-grid {
+    @apply w-[25vw] 1000:w-[20vw] h-[25vw] 1000:h-[20vw] overflow-hidden;
+    min-height: none;
 
+    .mediaItem {
+      margin: 0;
+      padding: 2vw;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+  }
+  /* } */
 
 /* 
   &-image {
