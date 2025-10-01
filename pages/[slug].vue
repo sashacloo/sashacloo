@@ -60,10 +60,18 @@
   @apply flex flex-col justify-between items-center;
 
   h2 {
-    @apply text-center pt-[5vw] text-darkgrey;
-    filter: blur(1.2px);
-    font-size: 3.1vw;
-    mix-blend-mode: difference;
+    @apply text-center text-darkgrey;
+    font-family: Arial, Helvetica, sans-serif;
+    position: fixed;
+    filter: blur(0.3px);
+    font-size: 11px;
+    /* mix-blend-mode: difference; */
+    top: 9vw;
+    zz-index: 100000;
+
+    @media (min-width: 1000px) {
+      top: 6.5vw;
+    }
   }
   .posts {
     @apply -mt-20;
