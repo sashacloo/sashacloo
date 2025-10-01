@@ -11,6 +11,7 @@
   const blur = useState('blur') 
   
   import { onMounted } from 'vue'
+  import { createClient } from '@sanity/client'
   import { postsQuery, siteQuery } from '~~/data/queries'
   const query = `
     { 
@@ -18,9 +19,13 @@
       ${siteQuery},
     }
   `
-  const { data } = await useSanityQuery(query)
-
-  const { posts, site } = data?.value
+  const sanity = createClient({
+    projectId: '1ql581l8',
+    dataset: 'production',
+    apiVersion: '2025-02-20',
+    useCdn: true,
+  })
+  const { posts, site } = await sanity.fetch(query)
 
 
 

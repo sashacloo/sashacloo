@@ -5,9 +5,19 @@ export default defineNuxtConfig({
   vite: {
     resolve: {
       alias: {
-        // Stub out Sanity visual editing (React-based) to avoid bundling React on the frontend build
         '@sanity/visual-editing': resolve(__dirname, 'utils/empty.js'),
+        '@sanity/visual-editing-csm': resolve(__dirname, 'utils/empty.js'),
+        'react-compiler-runtime': resolve(__dirname, 'utils/empty.js'),
       },
+    },
+    optimizeDeps: {
+      exclude: [
+        '@sanity/visual-editing',
+        '@sanity/visual-editing-csm',
+        'react',
+        'react-dom',
+        'react-compiler-runtime',
+      ],
     },
     server: {
       watch: {
@@ -27,6 +37,7 @@ export default defineNuxtConfig({
   devtools: {
     enabled: true,
     vscode: {},
+    // inspector: false, // Disable inspector
   },
 
   css: [
@@ -49,7 +60,7 @@ export default defineNuxtConfig({
   },
 
   sanity: {
-    projectId: SANITY_PROJECT_ID
+    projectId: SANITY_PROJECT_ID,
   },
 
   app: {

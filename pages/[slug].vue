@@ -31,6 +31,7 @@
 
 <script setup>
   import { onMounted } from 'vue'
+  import { createClient } from '@sanity/client'
   import { pageQuery, siteQuery } from '~~/data/queries'
   const query = `
     { 
@@ -40,9 +41,13 @@
   `
   const route = useRoute()
 
-  const { data } = await useSanityQuery(query, { slug: route.params.slug })
-
-  const { page, site } = data?.value
+  const sanity = createClient({
+    projectId: '1ql581l8',
+    dataset: 'production',
+    apiVersion: '2025-02-20',
+    useCdn: true,
+  })
+  const { page, site } = await sanity.fetch(query, { slug: route.params.slug })
 
   // Set and expose the default page background color for Post components to revert to
   const pageBgColor = useState('pageBgColor', () => page?.color?.hex || '')
