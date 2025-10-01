@@ -80,12 +80,51 @@
   }
 
   const postWrapper = ref(null)
+  // Read the default page background color stored by the page component
+  const pageBgColor = useState('pageBgColor')
+  // Global ordered list of active post IDs and a map of ID->color
+  const activePostOrder = useState('activePostOrder', () => [])
+  const activePostColorsMap = useState('activePostColorsMap', () => ({}))
+
+  // Keep a reference to the observer so we can properly disconnect on unmount
+  let intersectionObserver = null
 
   onMounted(() => {
-    
-    const callback = (entries, observer) => {
-      const entry = entries[0];
-      entry.isIntersecting ? document.documentElement.style.backgroundColor = props.post.color.hex : null
+    const callback = (entries) => {
+      const entry = entries[0]
+      const colorHex = props.post?.color?.hex
+      const postId = props.post?._id
+      if (entry.isIntersecting) {
+        // Add to active order and map, then set background to this post's color if it exists
+        if (postId && colorHex) {
+          if (!activePostOrder.value.includes(postId)) {
+            activePostOrder.value.push(postId)
+          }
+          activePostColorsMap.value[postId] = colorHex
+          document.documentElement.style.backgroundColor = colorHex
+        }
+        return
+      }
+      // Leaving viewport: remove this post id and color
+      if (!entry.isIntersecting && postId) {
+        const idx = activePostOrder.value.indexOf(postId)
+        if (idx !== -1) activePostOrder.value.splice(idx, 1)
+        if (activePostColorsMap.value[postId]) {
+          delete activePostColorsMap.value[postId]
+        }
+      }
+      // Set to the most recent active post color in order, or fallback to page color
+      for (let i = activePostOrder.value.length - 1; i >= 0; i--) {
+        const id = activePostOrder.value[i]
+        const c = activePostColorsMap.value[id]
+        if (c) {
+          document.documentElement.style.backgroundColor = c
+          return
+        }
+      }
+      if (pageBgColor?.value) {
+        document.documentElement.style.backgroundColor = pageBgColor.value
+      }
     }
 
     const options = {
@@ -93,12 +132,15 @@
       threshold: 0.5
     }
 
-    const intersectionObserver = new IntersectionObserver(callback, options);
-    intersectionObserver.observe(postWrapper.value);
+    intersectionObserver = new IntersectionObserver(callback, options)
+    if (postWrapper.value) intersectionObserver.observe(postWrapper.value)
   })
 
   onUnmounted(() => {
-    intersectionObserver.disconnect();
+    if (intersectionObserver) {
+      intersectionObserver.disconnect()
+      intersectionObserver = null
+    }
   })
 
   // const Flickity =
