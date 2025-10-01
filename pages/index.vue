@@ -22,10 +22,23 @@
   const sanity = createClient({
     projectId: '1ql581l8',
     dataset: 'production',
-    apiVersion: '2025-02-20',
+    apiVersion: '2024-10-01',
     useCdn: true,
+    apiHost: 'https://api.sanity.io',
   })
-  const { posts, site } = await sanity.fetch(query)
+
+  const { data, error } = await useAsyncData('indexData', async () => {
+    try {
+      return await sanity.fetch(query)
+    } catch (e) {
+      console.error('Sanity fetch (index) failed:', e)
+      return { posts: [], site: {} }
+    }
+  }, {
+    server: true,
+    lazy: false,
+  })
+  const { posts, site } = data.value || { posts: [], site: {} }
 
 
 

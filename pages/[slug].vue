@@ -46,8 +46,15 @@
     dataset: 'production',
     apiVersion: '2025-02-20',
     useCdn: true,
+    apiHost: 'https://api.sanity.io',
   })
-  const { page, site } = await sanity.fetch(query, { slug: route.params.slug })
+
+  const { data } = await useAsyncData(
+    () => `pageData:${route.params.slug}`,
+    () => sanity.fetch(query, { slug: route.params.slug }),
+    { server: true, lazy: false }
+  )
+  const { page, site } = data.value
 
   // Set and expose the default page background color for Post components to revert to
   const pageBgColor = useState('pageBgColor', () => page?.color?.hex || '')

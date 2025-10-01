@@ -192,7 +192,7 @@
     min-height: 50vh;
   }
   .mediaItem {
-    @apply relative my-[30vw] 1000:my-[20vw];
+    @apply relative my-[30vw] 1000:my-[15vw];
     
     img, video {
       max-width: 100%;
