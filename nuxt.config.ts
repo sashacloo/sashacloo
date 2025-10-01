@@ -1,7 +1,14 @@
+import { resolve } from 'node:path'
 const SANITY_PROJECT_ID = '1ql581l8'
 
 export default defineNuxtConfig({
   vite: {
+    resolve: {
+      alias: {
+        // Stub out Sanity visual editing (React-based) to avoid bundling React on the frontend build
+        '@sanity/visual-editing': resolve(__dirname, 'utils/empty.js'),
+      },
+    },
     server: {
       watch: {
         ignored: [
@@ -20,7 +27,6 @@ export default defineNuxtConfig({
   devtools: {
     enabled: true,
     vscode: {},
-    inspector: false, // Disable inspector
   },
 
   css: [
