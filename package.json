@@ -2,6 +2,9 @@
   "name": "sashacloo",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "build": "nuxt build",
     "dev": "CHOKIDAR_USEPOLLING=true yarn nuxt dev",
