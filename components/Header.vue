@@ -1,5 +1,5 @@
 <template>
-  <div class="header z-100 flex items-center justify-between bg-gray-200">
+  <div class="header z-10 fixed top-0 left-0 right-0 flex items-center justify-between bg-gray-200">
     <Logo />
     <button @click="handleGrid" class="button button-grid">{{ grid ? 'list' : 'grid' }}</button>
 
@@ -55,35 +55,34 @@ const copyToClipboard = (text) => {
 <style lang="postcss" scoped>
 
 .header {
-  /* @apply bg-[#ff00ff] flex flex-col justify-center items-center text-center p-2; */
+  mix-blend-mode: difference;
     
   a {
     text-decoration: none;
   }
   .button {
-    @apply fixed top-[9vw] 1000:top-[6.5vw];
-    filter: blur(0.5px);
+    @apply fixed top-[2vw] 1000:top-[2vw];
+    filter: blur(0.3px);
     font-size: 11px;
     font-family: Arial, Helvetica, sans-serif;
-    background-color: #c8c8c888;
-    color: rgb(73, 73, 73);
+    background-color: #888888;
+    color: rgb(0, 0, 0);
     padding: 0 1rem;
-    /* border: 2px solid #c8c8c8; */
     border-radius: 2rem;
     cursor: pointer;
     z-index: 11111;
+    user-select: none;
     transition: all 0.5s;
-    /* transform: translateX(-50%); */
 
     &-grid {
-      @apply left-[2vw] 1000:left-[1.5vw];
+      @apply left-[2vw] 1000:left-[2.5vw];
     }
     &-contact {
-      @apply right-[2vw] 1000:right-[1.5vw];
+      padding: 0 0.7rem;
+      @apply right-[2vw] 1000:right-[2.5vw];
     }
     &:hover {
-      background-color: #51ff0088;
-      /* border: 2px solid #51ff00; */
+      background-color: #ffffff;
       filter: blur(0);
     } 
   }

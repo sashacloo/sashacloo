@@ -1,5 +1,5 @@
 <template>
-  <div class="video-container">
+  <div :class="['video-container', { large: isLarge }]">
     <video 
       playsinline
       ref="video"
@@ -18,7 +18,9 @@
 
 <script setup>
 
-defineProps({
+import { ref, onMounted, onUnmounted } from 'vue'
+
+const props = defineProps({
   src: {
     type: String,
     required: true,
@@ -47,6 +49,10 @@ defineProps({
     type: Boolean,
     default: false,
   },
+  isLarge: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const video = ref(null); // Reference to the video element
@@ -60,6 +66,42 @@ const toggleMute = () => {
   }
 }
 
+let intersectionObserver = null
+
+onMounted(() => {
+  const el = video.value
+  if (!el) return
+
+  const callback = (entries) => {
+    const entry = entries[0]
+    if (!el) return
+
+    if (entry.isIntersecting) {
+      if (props.autoplay) {
+        el.play().catch(() => {})
+      }
+    } else {
+      el.pause()
+    }
+  }
+
+  intersectionObserver = new IntersectionObserver(callback, {
+    threshold: 0.5,
+  })
+
+  intersectionObserver.observe(el)
+})
+
+onUnmounted(() => {
+  if (intersectionObserver && video.value) {
+    intersectionObserver.unobserve(video.value)
+  }
+  if (intersectionObserver) {
+    intersectionObserver.disconnect()
+    intersectionObserver = null
+  }
+})
+
 </script>
 
 <style scoped>
@@ -72,16 +114,62 @@ const toggleMute = () => {
   width: 100%;
   height: auto;
   outline: none;
+  /* Fade-in for initial load */
+  opacity: 0;
+  animation: videoFadeIn 0.6s ease forwards;
+}
+
+@keyframes videoFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 button {
-  padding: 5px 15px;
-  border-radius: 2em;
-  font-size: 16px;
+  filter: blur(0.3px);
+  font-size: 11px;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #888888;
+  color: rgb(0, 0, 0);
+  padding: 0 1rem;
+  border-radius: 2rem;
   cursor: pointer;
-  opacity: 0.5;
   position: absolute;
-  top: 20px;
-  right: 20px;
-  background: rgb(255, 255, 255);
+  bottom: 1.5vw;
+  right: 2vw;
+  z-index: 10;
+  user-select: none;
+  transition: all 0.5s;
+
+  @media (min-width: 1024px) {
+    right: 2.5vw;
+  }
+}
+
+button:hover {
+  background-color: #ffffff;
+  filter: blur(0);
+}
+
+/* .video-container.large button {
+  top: auto;
+  bottom: 20px;
+} */
+
+.video-container.large {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.video-container.large .video-player {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 </style>

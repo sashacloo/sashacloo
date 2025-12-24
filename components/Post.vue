@@ -32,6 +32,7 @@
         :autoplay="true"
         :loop="true"
         :muted="true"
+        :isLarge="post.large && !grid"
       />
 
       <div v-if="mediaItem.body">
@@ -90,6 +91,7 @@
   let intersectionObserver = null
 
   onMounted(() => {
+
     const callback = (entries) => {
       const entry = entries[0]
       const colorHex = props.post?.color?.hex
@@ -203,9 +205,16 @@
 
   &.large:not(.in-grid) {
     width: 100vw;
-    height: auto;
+    height: 100vh;
+    overflow: hidden;
     
     .mediaItem {
+      /* In large mode, remove vertical margins and center content so it fits within the viewport */
+      margin: 0;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       @apply 1000:my-0;
     }
   }
@@ -263,7 +272,7 @@
     right: 0;
     width: 100%;
     overflow: hidden;
-    padding: 0.5em 1em;
+    padding: 2vw;
     pointer-events: none;
     position: fixed;
     text-align: left;
@@ -276,7 +285,8 @@
 
 
     @media (min-width: 1024px) {
-      
+      padding: 2vw 2.5vw;
+
       :hover > & {
         opacity: 100%;
         mix-blend-mode: difference;
