@@ -209,8 +209,8 @@
       object-fit: contain;
 
       @media (min-width: 1024px) {
-        width: 80%;
-        height: 80%;
+        max-width: 80%;
+      max-height: 80%;
       }
     }
   }
