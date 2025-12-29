@@ -33,11 +33,11 @@ const handleGrid = () => {
     blur.value = !blur.value
   }, 300);
 };
-const handleUrl = () => {
-  if (!showEmail.value) {
-  } else {
-  }
+
+const handleUrl = (url) => {
+  window.open(url, '_blank');
 };
+
 const handleContact = () => {
   if (!showEmail.value) {
     showEmail.value = true;
