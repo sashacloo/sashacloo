@@ -1,7 +1,12 @@
 <template>
   <div class="page">
     <div :class="['posts', {'in-grid': grid}, {'blur': blur}]">
-      <Post v-for="(post, index) in posts" :key="index" :post="post" />
+      <Post
+        v-for="(post, index) in posts"
+        :key="index"
+        :post="post"
+        :index="index"
+      />
     </div>
   </div>
 </template>
@@ -40,26 +45,6 @@
   })
   const { posts, site } = data.value || { posts: [], site: {} }
 
-
-
-  // const { siteSettings } = siteData?.value
-
-  // const { footer, header, seo } = siteSettings
-
-  // useState('footer', () => footer)
-  // useState('header', () => header)
-
-  // useState('color', () => page.color.hex)
-  // useState('bgColor', () => page.bgColor.hex)
-
-  onMounted(() => {
-    // console.log(posts)
-    // console.log('site:', site.title)
-    // document.documentElement.style.opacity = 1
-    // document.documentElement.style.backgroundColor = page.bgColor.hex
-    // document.documentElement.style.color = page.color.hex
-  })
-
   useHead(() => {
     return {
       title: 'sasha cloo',
@@ -76,17 +61,23 @@
   @apply flex flex-col justify-between items-center;
   
   .posts {
-    @apply pt-[15vw] 1000:pt-[8vw];
     transition: all 0.5s;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    max-height: 100vh;
+    overflow-y: auto;
 
     &:not(.in-grid) {
       @apply 1000:pt-0;
     }
     &.in-grid {
       @apply grid grid-cols-4 1000:grid-cols-5;
+      scroll-snap-type: none;
+      max-height: none;
+      overflow-y: visible;
     }
     &.blur {
-      /* filter: blur(20px); */
+      filter: blur(20px);
       transition: none;
     }
   }

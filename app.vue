@@ -8,7 +8,7 @@
 :root {
   /* @apply text-[10px] 800:text-[12px] opacity-0; */
   /* opacity: 0; */
-  font-family: concielian;
+  /* font-family: concielian; */
   background-color: #000000;
   transition:
     color 0.5s,

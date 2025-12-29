@@ -4,6 +4,7 @@
     :class="[{ large: post.large }, {'in-grid': grid}]"
     ref="postWrapper"
     v-bind="filteredAttrs"
+    @click="handlePostClick"
   >
     <!-- <div :class="['mediaItem', 'flex', 'items-center', 'justify-center', mediaItem._type]"> -->
     <div
@@ -33,6 +34,8 @@
         :loop="true"
         :muted="true"
         :isLarge="post.large && !grid"
+        :showToggle="!grid"
+        :hoverSound="grid"
       />
 
       <div v-if="mediaItem.body">
@@ -57,10 +60,14 @@
 <script setup>
   const grid = useState('grid') 
 
-  import { useAttrs, computed } from 'vue';
+  import { useAttrs, computed, nextTick } from 'vue';
 
   const props = defineProps({
-    post: Object
+    post: Object,
+    index: {
+      type: Number,
+      default: 0,
+    },
   });
 
   const attrs = useAttrs();
@@ -89,6 +96,38 @@
 
   // Keep a reference to the observer so we can properly disconnect on unmount
   let intersectionObserver = null
+
+  const scrollIntoView = () => {
+    if (!postWrapper.value) return
+    // Try to scroll the posts container by a deterministic amount based on index
+    const postsContainer = postWrapper.value.closest('.posts')
+
+    if (!postsContainer) {
+      // Fallback if no container; let browser handle it
+      postWrapper.value.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      return
+    }
+
+    const viewport = postsContainer.clientHeight || window.innerHeight || 0
+    if (!viewport) {
+      postWrapper.value.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      return
+    }
+
+    const target = props.index * viewport
+    postsContainer.scrollTo({ top: target, behavior: 'smooth' })
+  }
+
+  const handlePostClick = () => {
+    if (!grid?.value) return
+    grid.value = false
+    nextTick(() => {
+      // Give the layout a moment to settle after switching out of grid
+      setTimeout(() => {
+        scrollIntoView()
+      }, 50)
+    })
+  }
 
   onMounted(() => {
 
@@ -145,83 +184,52 @@
     }
   })
 
-  // const Flickity =
-  //   typeof window !== 'undefined'
-  //     ? require('flickity')
-  //     : () => null
-
-  // Flickity.imagesLoaded =
-  //   typeof window !== 'undefined'
-  //     ? require('flickity-imagesloaded')
-  //     : () => null
-      
-  // Flickity.fade =
-  //   typeof window !== 'undefined'
-  //     ? require('flickity-fade')
-  //     : () => null
-
-  // if (!Flickity) {
-  //   return
-  // }
-  // this.$flickity = new Flickity(this.$refs.postImage, {
-  //   pageDots: false,
-  //   prevNextButtons: false,
-  //   // cellAlign: 'left',
-  //   wrapAround: true,
-  //   imagesLoaded: true,
-  //   // on: {
-  //   //   change: (index) => {
-  //   //     if (this.hasDragged) {
-  //   //       this.$store.dispatch('global/galleryIndex', index + 1);
-  //   //     }
-  //   //   },
-  //   //   dragStart: () => {
-  //   //     this.hasDragged = true
-  //   //   },
-  //   // },
-  // });
 </script>
 
 <style lang="postcss" scoped>
 .post {
   position: relative;
-  transition: all 0.5s;
-  width: 80vw;
+  width: 100vw;
+  height: 100vh;
   margin: auto; 
+  overflow: hidden;
+  transition: all 0.5s;
+  scroll-snap-align: start;
 
-  @media (min-width: 1024px) {
-    width: 50vw;
-    min-height: 50vh;
-  }
   .mediaItem {
-    @apply relative my-[30vw] 1000:my-[15vw];
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     
     img, video {
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
+
+      @media (min-width: 1024px) {
+        width: 80%;
+        height: 80%;
+      }
     }
   }
-
-  &.large:not(.in-grid) {
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
     
+  &.large:not(.in-grid) {
     .mediaItem {
-      /* In large mode, remove vertical margins and center content so it fits within the viewport */
-      margin: 0;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      @apply 1000:my-0;
+      img, video {
+        @media (min-width: 1024px) {
+          width: 100%;
+          height: 100%;
+        }
+      }
     }
   }
 
   &.in-grid {
     @apply w-[25vw] 1000:w-[20vw] h-[25vw] 1000:h-[20vw] overflow-hidden;
-    min-height: none;
+    min-height: auto;
+    scroll-snap-align: none;
 
     .mediaItem {
       margin: 0;
@@ -231,61 +239,25 @@
       align-items: center;
     }
   }
-  /* } */
-
-/* 
-  &-image {
-    overflow: hidden;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-
-    img {
-      margin: 1em;
-      max-width: 90%;
-      max-height: 80%;
-
-      @media (min-width: 1024px) {
-        max-height: 70%;
-        max-width: 75%;
-      }
-    }
-  }
-  &-video {
-
-    @media (min-width: 1024px) {
-      height: 56.3vw;
-    }
-  }
-  */
 
   &-content {
-    /* filter: blur(0.5px); */
+    @apply left-[2.5vw] bottom-[1.2vw];
     display: flex;
     flex-direction: column;
     justify-content: center;
     box-sizing: border-box;
-    /* border-radius: 0 1em; */
-    bottom: 0;
-    right: 0;
     width: 100%;
     overflow: hidden;
-    padding: 2vw;
+    padding: 3px 17px 6px 17px;
     pointer-events: none;
     position: fixed;
     text-align: left;
-    font-size: 13px;
-    font-family: Helvetica, Arial, sans-serif;
-    color: grey;
     transition: opacity .2s;
     opacity: 0;
     z-index: 50;
 
 
     @media (min-width: 1024px) {
-      padding: 2vw 2.5vw;
 
       :hover > & {
         opacity: 100%;

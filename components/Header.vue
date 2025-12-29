@@ -1,16 +1,21 @@
 <template>
   <div class="header z-10 fixed top-0 left-0 right-0 flex items-center justify-between bg-gray-200">
     <Logo />
-    <button @click="handleGrid" class="button button-grid">{{ grid ? 'list' : 'grid' }}</button>
-
-    <button class="button button-contact" @click="handleClick">
+    <Button @click="handleUrl('https://sashaklu.com')" class="button-sashaklu">
+      by sasha klu
+    </Button>
+    <Button @click="handleGrid" class="button-grid">
+      {{ grid ? 'list' : 'grid' }}
+    </Button>
+    <Button @click="handleContact" class="button-contact">
       {{ contactText }}
-    </button>
+    </Button>
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
+import Button from "~/components/Button.vue";
 
 const grid = useState('grid', () => ref(false))
 const blur = useState('blur', () => ref(false))
@@ -28,7 +33,12 @@ const handleGrid = () => {
     blur.value = !blur.value
   }, 300);
 };
-const handleClick = () => {
+const handleUrl = () => {
+  if (!showEmail.value) {
+  } else {
+  }
+};
+const handleContact = () => {
   if (!showEmail.value) {
     showEmail.value = true;
     contactText.value = email;
@@ -56,35 +66,36 @@ const copyToClipboard = (text) => {
 
 .header {
   mix-blend-mode: difference;
-    
-  a {
-    text-decoration: none;
-  }
-  .button {
-    @apply fixed top-[2vw] 1000:top-[2vw];
-    filter: blur(0.3px);
-    font-size: 11px;
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: #888888;
-    color: rgb(0, 0, 0);
-    padding: 0 1rem;
-    border-radius: 2rem;
-    cursor: pointer;
-    z-index: 11111;
-    user-select: none;
-    transition: all 0.5s;
 
-    &-grid {
-      @apply left-[2vw] 1000:left-[2.5vw];
-    }
-    &-contact {
-      padding: 0 0.7rem;
-      @apply right-[2vw] 1000:right-[2.5vw];
-    }
-    &:hover {
-      background-color: #ffffff;
-      filter: blur(0);
-    } 
+  .button-grid,
+  .button-contact,
+  .button-sashaklu {
+    position: fixed;
+    z-index: 11111;
+    transition: all 0.5s;
   }
+  .button-grid,
+  .button-contact {
+    @apply top-[1.5vw] 1000:top-[2vw];
+  }
+  .button-grid {
+    @apply left-[0vw] 1000:left-[2.5vw];
+  }
+  .button-contact {
+    @apply right-[0vw] 1000:right-[2.5vw];
+  }
+  .button-sashaklu {
+    @apply bottom-[1.2vw] left-[1vw]
+           1000:bottom-auto 1000:left-[50vw] 1000:top-[2vw]
+           1000:-translate-x-1/2 1000:blur-[16px];
+  }
+  &:hover {
+    .logo {
+      filter: blur(21px);
+    }
+    .button-sashaklu {
+      filter: blur(0);
+    }
+  }  
 }
 </style>

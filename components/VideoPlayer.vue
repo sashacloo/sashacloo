@@ -1,5 +1,9 @@
 <template>
-  <div :class="['video-container', { large: isLarge }]">
+  <div
+    :class="['video-container', { large: isLarge }]"
+    @mouseenter="handleMouseEnter"
+    @mouseleave="handleMouseLeave"
+  >
     <video 
       playsinline
       ref="video"
@@ -10,15 +14,20 @@
       :muted="muted"
       class="video-player"
     ></video>
-    <button v-if="soundToggle" @click="toggleMute">
+    <Button
+      v-if="soundToggle && showToggle"
+      class="sound-toggle"
+      @click="toggleMute"
+    >
       {{ isMuted ? "sound off" : "sound on" }}
-    </button>
+    </Button>
   </div>
 </template>
 
 <script setup>
 
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
+import Button from '~/components/Button.vue'
 
 const props = defineProps({
   src: {
@@ -53,10 +62,19 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  showToggle: {
+    type: Boolean,
+    default: true,
+  },
+  hoverSound: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const video = ref(null); // Reference to the video element
 const isMuted = ref(true); // State for mute/unmute
+const isHoverUnmuted = ref(false);
 
 // Toggle mute/unmute
 const toggleMute = () => {
@@ -65,6 +83,34 @@ const toggleMute = () => {
     isMuted.value = video.value.muted; // Update the state
   }
 }
+
+const handleMouseEnter = () => {
+  if (!props.hoverSound || !video.value) return
+  video.value.muted = false
+  isMuted.value = video.value.muted
+  isHoverUnmuted.value = true
+}
+
+const handleMouseLeave = () => {
+  if (!props.hoverSound || !video.value) return
+  video.value.muted = true
+  isMuted.value = video.value.muted
+  isHoverUnmuted.value = false
+}
+
+// When hoverSound becomes true (grid view), ensure video is muted so
+// switching to grid always silences any playing audio.
+watch(
+  () => props.hoverSound,
+  (newVal) => {
+    if (!video.value) return
+    if (newVal) {
+      video.value.muted = true
+      isMuted.value = true
+      isHoverUnmuted.value = false
+    }
+  }
+)
 
 let intersectionObserver = null
 
@@ -127,36 +173,17 @@ onUnmounted(() => {
     opacity: 1;
   }
 }
-button {
-  filter: blur(0.3px);
-  font-size: 11px;
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: #888888;
-  color: rgb(0, 0, 0);
-  padding: 0 1rem;
-  border-radius: 2rem;
-  cursor: pointer;
+
+.sound-toggle {
   position: absolute;
   bottom: 1.5vw;
   right: 2vw;
   z-index: 10;
-  user-select: none;
-  transition: all 0.5s;
 
   @media (min-width: 1024px) {
     right: 2.5vw;
   }
 }
-
-button:hover {
-  background-color: #ffffff;
-  filter: blur(0);
-}
-
-/* .video-container.large button {
-  top: auto;
-  bottom: 20px;
-} */
 
 .video-container.large {
   width: 100vw;
