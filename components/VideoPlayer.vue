@@ -152,7 +152,8 @@ onUnmounted(() => {
 
 <style scoped>
 .video-container {
-  position: relative;
+  /* Let the parent media item be the positioning context for overlays */
+  position: static;
   width: 100%;
   height: auto;
 }
