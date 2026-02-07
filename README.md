@@ -1,75 +1,16 @@
-# Nuxt 3 Minimal Starter
+### Hi, I’m Sasha
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Design-driven frontend engineer working at the intersection of UI, motion, and systems.
+I build production React / Vue apps, interactive experiences, and tools that blend design and engineering.
 
-## Setup
+Most of my work lives in private repos (client + startup work).
 
-Make sure to install the dependencies:
+**Stack**
+- React/Next.js, Vue/Nuxt
+- Three.js / R3F, GSAP, Framer Motion
+- TypeScript, Tailwind, Sanity, Shopify
+- Performance, animation, design systems
 
-```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+Links:
+- LinkedIn: https://www.linkedin.com/in/sashaklu/
+- Website: https://sashaklu.com
