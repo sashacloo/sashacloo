@@ -205,20 +205,19 @@
     justify-content: center;
     
     img, video {
-      max-width: 100%;
-      max-height: 100%;
+      max-width: 78%;
+      max-height: 78%;
       object-fit: contain;
-
-      @media (min-width: 1024px) {
-        max-width: 80%;
-        max-height: 80%;
-      }
     }
   }
     
   &.large:not(.in-grid) {
     .mediaItem {
       img, video {
+        max-width: 100vw;
+        max-height: 100svh;
+        width: 100vw;
+        height: 100svh;
         @media (min-width: 1024px) {
           max-width: 100%;
           max-height: 100%;

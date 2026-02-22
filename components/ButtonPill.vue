@@ -30,7 +30,7 @@ const props = defineProps({
   padding: 1.5px 15px 3px;
   background-image:
     radial-gradient(75% 50% at 50% 0%, #f5f5f5, transparent),
-    radial-gradient(75% 35% at 50% 80%, #b0b0b0, transparent);
+    radial-gradient(75% 35% at 50% 78%, #b0b0b0, transparent);
   box-shadow:
     inset 0 -2px 4px 1px rgba(40, 40, 40, 0.7),
     inset 0 -4px 4px 1px #b0b0b0,
@@ -53,7 +53,7 @@ const props = defineProps({
   left: 50%;
   transform: translateX(-50%);
   border-radius: 50px;
-  width: 80%;
+  width: 78%;
   height: 40%;
   background-image: linear-gradient(to bottom, #f4feff, transparent);
   opacity: 0.75;

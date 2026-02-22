@@ -15,7 +15,7 @@
       class="video-player"
     ></video>
     <Button
-      v-if="soundToggle && showToggle"
+      v-if="soundToggle && showToggle && isInView"
       class="sound-toggle"
       @click="toggleMute"
     >
@@ -75,6 +75,7 @@ const props = defineProps({
 const video = ref(null); // Reference to the video element
 const isMuted = ref(true); // State for mute/unmute
 const isHoverUnmuted = ref(false);
+const isInView = ref(false);
 
 // Toggle mute/unmute
 const toggleMute = () => {
@@ -123,10 +124,12 @@ onMounted(() => {
     if (!el) return
 
     if (entry.isIntersecting) {
+      isInView.value = true
       if (props.autoplay) {
         el.play().catch(() => {})
       }
     } else {
+      isInView.value = false
       el.pause()
     }
   }
@@ -155,15 +158,32 @@ onUnmounted(() => {
   /* Let the parent media item be the positioning context for overlays */
   position: static;
   width: 100%;
-  height: auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 .video-player {
-  width: 100%;
-  height: auto;
+  width: 78%;
+  height: 78%;
+  object-fit: contain;
   outline: none;
   /* Fade-in for initial load */
   opacity: 0;
   animation: videoFadeIn 0.6s ease forwards;
+}
+
+.video-container.large .video-player {
+  width: 100vw;
+  height: 100svh;
+  object-fit: contain;
+}
+
+@media (min-width: 1024px) {
+  .video-container.large .video-player {
+    object-fit: cover;
+  }
 }
 
 @keyframes videoFadeIn {
@@ -176,28 +196,19 @@ onUnmounted(() => {
 }
 
 .sound-toggle {
-  position: absolute;
-  bottom: 1.5vw;
-  right: 2vw;
-  z-index: 10;
+  /* Mobile: pin to viewport so it stays visible and aligns with footer buttons */
+  position: fixed;
+  bottom: max(1.2vw, env(safe-area-inset-bottom));
+  right: 1vw;
+  z-index: 11111;
 
   @media (min-width: 1024px) {
+    /* Desktop: keep anchored to the media area */
+    position: absolute;
+    bottom: 1.5vw;
     right: 2.5vw;
+    z-index: 10;
   }
 }
 
-.video-container.large {
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.video-container.large .video-player {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
 </style>
