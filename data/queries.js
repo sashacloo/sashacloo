@@ -19,6 +19,11 @@ const linkQuery = `{
 }`
 export const postQuery = `{
   ...,
+  categories[]->{
+    title,
+    description,
+    "slug": slug.current,
+  },
   mediaItems[]{
     ...,
     _type == 'imageObject' => ${imageQuery},
@@ -31,6 +36,16 @@ export const postQuery = `{
 }`
 export const postsQuery = `
   'posts': *[_type == 'post'] | order(publishedAt desc)${postQuery}
+`
+export const postsByCategoryQuery = `
+  'posts': *[_type == 'post' && references(*[_type == 'category' && (slug.current == $category || lower(title) == lower($category))][0]._id)] | order(publishedAt desc)${postQuery}
+`
+export const categoryBySlugQuery = `
+  'category': *[_type == 'category' && (slug.current == $category || lower(title) == lower($category))][0]{
+    title,
+    description,
+    "slug": slug.current,
+  }
 `
 export const pageQuery = `
   'page': *[_type == 'page' && slug.current == $slug][0]{
