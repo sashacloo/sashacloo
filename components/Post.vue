@@ -205,7 +205,7 @@
     justify-content: center;
     
     img, video {
-      max-width: 78%;
+      /* max-width: 78%; */
       max-height: 78%;
       object-fit: contain;
     }

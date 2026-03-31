@@ -1,8 +1,18 @@
 <template>
   <div class="header z-10 fixed top-0 left-0 right-0 flex items-center justify-between bg-gray-200">
     <Logo />
-    <Button @click="handleUrl('https://sashaklu.com')" class="button-sashaklu">
-      by sasha klu
+    <Button class="button-sashaklu">
+      design by
+      <span
+        class="sasha-link"
+        role="link"
+        tabindex="0"
+        @click.stop="handleUrl('https://sashaklu.com')"
+        @keydown.enter.prevent="handleUrl('https://sashaklu.com')"
+        @keydown.space.prevent="handleUrl('https://sashaklu.com')"
+      >
+        sasha klu
+      </span>
     </Button>
     <Button @click="handleGrid" class="button-grid">
       {{ grid ? 'list' : 'grid' }}
@@ -88,6 +98,11 @@ const copyToClipboard = (text) => {
     @apply bottom-[1.2vw] left-[1vw]
            1000:bottom-auto 1000:left-[50vw] 1000:top-[2vw]
            1000:-translate-x-1/2 1000:blur-[16px];
+  }
+  .sasha-link {
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
   }
   &:hover {
     .logo {
