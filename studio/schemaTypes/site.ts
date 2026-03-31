@@ -75,7 +75,6 @@ export default {
           ]
         }
       ],
-      validation: (Rule) => Rule.required(),
     },
     {
       name: 'footer',
