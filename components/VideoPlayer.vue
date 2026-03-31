@@ -165,13 +165,20 @@ onUnmounted(() => {
   overflow: hidden;
 }
 .video-player {
-  width: 78%;
-  height: 78%;
+  width: 100%;
+  height: auto;
   object-fit: contain;
   outline: none;
   /* Fade-in for initial load */
   opacity: 0;
   animation: videoFadeIn 0.6s ease forwards;
+}
+
+@media (min-width: 1024px) {
+  .video-player {
+    width: 78%;
+    height: 78%;
+  }
 }
 
 .video-container.large .video-player {
