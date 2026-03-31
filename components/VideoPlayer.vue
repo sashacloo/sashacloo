@@ -73,7 +73,7 @@ const props = defineProps({
 });
 
 const video = ref(null); // Reference to the video element
-const isMuted = ref(true); // State for mute/unmute
+const isMuted = ref(props.muted); // State for mute/unmute
 const isHoverUnmuted = ref(false);
 const isInView = ref(false);
 
@@ -109,6 +109,9 @@ watch(
       video.value.muted = true
       isMuted.value = true
       isHoverUnmuted.value = false
+    } else {
+      video.value.muted = props.muted
+      isMuted.value = video.value.muted
     }
   }
 )
@@ -118,6 +121,13 @@ let intersectionObserver = null
 onMounted(() => {
   const el = video.value
   if (!el) return
+
+  if (props.hoverSound) {
+    el.muted = true
+  } else {
+    el.muted = props.muted
+  }
+  isMuted.value = el.muted
 
   const callback = (entries) => {
     const entry = entries[0]

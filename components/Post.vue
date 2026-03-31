@@ -32,7 +32,7 @@
         :poster="mediaItem.image"
         :autoplay="true"
         :loop="true"
-        :muted="true"
+        :muted="!mediaItem.soundToggle"
         :isLarge="post.large && !grid"
         :showToggle="!grid"
         :hoverSound="grid"
