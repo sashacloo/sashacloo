@@ -24,8 +24,8 @@
 import { ref, computed } from "vue";
 import Button from "~/components/Button.vue";
 
-const grid = useState('grid', () => false)
-const blur = useState('blur', () => false)
+const grid = useState('grid', () => ref(false))
+const blur = useState('blur', () => ref(false))
 const route = useRoute()
 const router = useRouter()
 

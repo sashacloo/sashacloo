@@ -136,7 +136,11 @@ onMounted(() => {
     if (entry.isIntersecting) {
       isInView.value = true
       if (props.autoplay) {
-        el.play().catch(() => {})
+        el.play().catch(() => {
+            el.muted = true
+            isMuted.value = true
+            el.play().catch(() => {})
+          })
       }
     } else {
       isInView.value = false
