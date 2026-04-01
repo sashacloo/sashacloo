@@ -11,7 +11,7 @@
       :poster="poster"
       :autoplay="autoplay"
       :loop="loop"
-      :muted="muted"
+      muted
       class="video-player"
     ></video>
     <Button
@@ -26,7 +26,7 @@
 
 <script setup>
 
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import Button from '~/components/Button.vue'
 
 const props = defineProps({
@@ -122,12 +122,8 @@ onMounted(() => {
   const el = video.value
   if (!el) return
 
-  if (props.hoverSound) {
-    el.muted = true
-  } else {
-    el.muted = props.muted
-  }
-  isMuted.value = el.muted
+  el.muted = true
+  isMuted.value = true
 
   const callback = (entries) => {
     const entry = entries[0]
@@ -135,12 +131,16 @@ onMounted(() => {
 
     if (entry.isIntersecting) {
       isInView.value = true
-      if (props.autoplay) {
-        el.play().catch(() => {
-            el.muted = true
-            isMuted.value = true
-            el.play().catch(() => {})
-          })
+      if (props.autoplay && el.paused) {
+        // Try play immediately, or wait for video to be ready
+        const tryPlay = () => {
+          el.play().catch(() => {})
+        }
+        if (el.readyState >= 2) {
+          tryPlay()
+        } else {
+          el.addEventListener('canplay', tryPlay, { once: true })
+        }
       }
     } else {
       isInView.value = false
@@ -153,6 +153,24 @@ onMounted(() => {
   })
 
   intersectionObserver.observe(el)
+
+  // Check if video is already visible on mount (above the fold)
+  nextTick(() => {
+    const rect = el.getBoundingClientRect()
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight
+    const visibleHeight = Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0)
+    const isInitiallyVisible = visibleHeight > rect.height * 0.5
+
+    if (props.autoplay && isInitiallyVisible && el.paused) {
+      isInView.value = true
+      const tryPlay = () => { el.play().catch((err) => { console.error('Video play error:', err) }) }
+      if (el.readyState >= 2) {
+        tryPlay()
+      } else {
+        el.addEventListener('canplay', tryPlay, { once: true })
+      }
+    }
+  })
 })
 
 onUnmounted(() => {
