@@ -48,9 +48,21 @@
         <h6 class="post-date">
           {{ date(post.publishedAt) }}
         </h6>
-        <h2 class="post-title">
-          {{ post.title }}
-        </h2>
+        <div class="post-heading">
+          <h2 class="post-title">
+            {{ post.title }}
+          </h2>
+          <a
+            v-if="sanityUser && post._id"
+            class="post-edit"
+            :href="editUrl(post._id)"
+            target="_blank"
+            rel="noopener"
+            @click.stop
+          >
+            edit
+          </a>
+        </div>
         <!-- <SanityContent v-if="post.body" :blocks="post.body" class="post-body" /> -->
         <div v-if="post.categories?.length" class="post-tags">
           <NuxtLink
@@ -95,6 +107,14 @@
     day = day < 10 ? '0' + day : day
     const strDate = year + '-' + month + '-' + day
     return strDate
+  }
+
+  // Only shown to someone signed in to the studio in this browser
+  const { user: sanityUser } = useSanityUser()
+
+  const editUrl = (id) => {
+    const publishedId = String(id).replace(/^drafts\./, '')
+    return `https://sashacloo.sanity.studio/intent/edit/id=${encodeURIComponent(publishedId)};type=post`
   }
 
   // Categories have no slug set in the studio yet, so fall back to the title —
@@ -288,6 +308,30 @@
     }
   }
 
+  &-heading {
+    @apply flex items-center gap-x-2;
+  }
+
+  &-edit {
+    @apply shrink-0;
+    pointer-events: none;
+    /* same outlined pill as the tags, so the caption reads as one row of chips */
+    font-size: 11px;
+    font-family: Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    color: inherit;
+    border: 1px solid currentColor;
+    border-radius: 2rem;
+    padding: 0 10px 1px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.5s;
+
+    &:hover {
+      background-color: #51ff0088;
+    }
+  }
+
   &-tags {
     @apply flex flex-wrap gap-x-2 gap-y-1 mt-1.5;
     /* Every post fixes a caption to the same spot, so leaving all of their tags
@@ -297,7 +341,8 @@
   }
 
   @media (min-width: 1024px) {
-    &:hover &-tags {
+    &:hover &-tags,
+    &:hover &-edit {
       pointer-events: auto;
     }
   }
