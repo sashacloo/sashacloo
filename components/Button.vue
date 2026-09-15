@@ -68,7 +68,6 @@ const props = defineProps({
 .button span {
   position: relative;
   display: block;
-  text-shadow: 0 0.25em 0.05em rgba(0,0,0,0.1);
   transition: all 0.4s ease-out;
   padding: 3px 17px 6px 17px;
   white-space: nowrap;

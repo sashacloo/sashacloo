@@ -242,9 +242,19 @@
     justify-content: center;
     
     img, video {
-      /* max-width: 78%; */
       max-height: 78%;
       object-fit: contain;
+    }
+  }
+
+  /* Height alone does not hold a wide image back: a 2:1 image sat at its full
+     natural width. Cap the width too — but only where 78% is the rule, so the
+     large posts and the grid thumbnails keep their own sizing. */
+  &:not(.large):not(.in-grid) {
+    .mediaItem {
+      img, video {
+        max-width: 78%;
+      }
     }
   }
     
