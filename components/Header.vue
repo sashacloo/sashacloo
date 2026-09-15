@@ -259,7 +259,11 @@ const copyToClipboard = (text) => {
 
     /* the pill itself lives inside Button, past this component's scope */
     &.is-active :deep(.button) {
-      background-color: #51ff0088;
+      background-color: #00ff00;
+      color: #000000;
+    }
+    &.is-active :deep(.button:hover span) {
+      color: #000000;
     }
   }
 
@@ -302,6 +306,12 @@ const copyToClipboard = (text) => {
   position: fixed;
   inset: 0;
   z-index: 33332;
+}
+
+.filter-option.is-active :deep(.button),
+.filter-option.is-active :deep(.button:hover span) {
+  background-color: #00ff00;
+  color: #000000;
 }
 
 .filter-menu {
