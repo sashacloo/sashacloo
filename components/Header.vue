@@ -67,10 +67,22 @@ import { ref, computed, watch } from "vue";
 import { createClient } from '@sanity/client'
 import Button from "~/components/Button.vue";
 
-const grid = useState('grid', () => ref(false))
-const blur = useState('blur', () => ref(false))
 const route = useRoute()
 const router = useRouter()
+
+// Grid is a view preference, but it should survive a reload and travel in a
+// shared link, so ?grid mirrors it. Seeded here during setup, before the page
+// renders, so a shared link server-renders as a grid rather than flashing.
+const inUrl = () => route.query.grid !== undefined
+const grid = useState('grid', () => ref(inUrl()))
+const blur = useState('blur', () => ref(false))
+
+const syncUrl = () => {
+  const query = { ...route.query }
+  if (grid.value) query.grid = null
+  else delete query.grid
+  router.replace({ path: route.path, query, hash: route.hash })
+}
 
 const sanity = createClient({
   projectId: '1ql581l8',
@@ -137,6 +149,12 @@ const categories = computed(() =>
 const filterOpen = ref(false)
 watch(() => route.path, () => { filterOpen.value = false })
 
+// Carry the view across navigation: filtering by a category from the grid
+// should land on a grid, and its URL should say so.
+watch(() => route.fullPath, () => {
+  if (grid.value !== inUrl()) syncUrl()
+})
+
 const showEmail = ref(false);
 const email = 'me' + '@' + 'sashaklu.com';
 
@@ -144,6 +162,7 @@ const contactText = ref("contact");
 
 const handleGrid = () => {
   grid.value = !grid.value
+  syncUrl()
   blur.value = true
 
   setTimeout(() => {
