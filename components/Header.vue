@@ -155,7 +155,7 @@ const copyToClipboard = (text) => {
            1000:-translate-x-1/2 1000:blur-[16px];
   }
   .button-category {
-    @apply left-[50vw] top-[12.5vw] 1000:top-[7vw] -translate-x-1/2;
+    @apply left-[50vw] top-[calc(12.5vw_-_50px)] 1000:top-[calc(7vw_-_50px)] -translate-x-1/2;
     z-index: 22222;
   }
   .category-close {
