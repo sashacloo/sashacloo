@@ -1,19 +1,28 @@
 <template>
   <div class="button-wrap">
-    <button class="button">
+    <component :is="to ? NuxtLink : 'button'" :to="to" class="button">
       <span>
         <slot />
       </span>
-    </button>
+    </component>
     <div class="button-shadow"></div>
   </div>
 </template>
 
 <script setup>
+import { resolveComponent } from 'vue'
+
+const NuxtLink = resolveComponent('NuxtLink')
+
 const props = defineProps({
   type: {
     type: String,
     default: 'button'
+  },
+  // Give it a route and the same pill renders as a link instead of a button
+  to: {
+    type: String,
+    default: ''
   }
 })
 </script>
