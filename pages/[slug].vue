@@ -1,45 +1,53 @@
 <template>
   <div class="page">
-    <NuxtLink to="/" class="page-title button">
-      <h2>
-        {{ page.title }}
-      </h2>
-    </NuxtLink>
+    <template v-if="page">
+      <NuxtLink to="/" class="page-title button">
+        <h2>
+          {{ page.title }}
+        </h2>
+      </NuxtLink>
 
-    <div class="images">
-      <SanityImage
-        v-for="(image, index) in page.images" :key="index"
-        :asset-id="image.assetId"
-        auto="format"
-      >
-        <template #default="{ src }">
-          <img
-            :alt="image.imageCaption"
-            class="image"
-            :src="src"
-          />
-        </template>
-      </SanityImage>
-    </div>
+      <div class="images">
+        <SanityImage
+          v-for="(image, index) in page.images" :key="index"
+          :asset-id="image.assetId"
+          auto="format"
+        >
+          <template #default="{ src }">
+            <img
+              :alt="image.imageCaption"
+              class="image"
+              :src="src"
+            />
+          </template>
+        </SanityImage>
+      </div>
 
-    <div class="posts">
-      <Post v-for="(post, index) in page.posts" :key="index" :post="post" />
-    </div>
+      <div class="page-posts">
+        <Post v-for="(post, index) in page.posts" :key="index" :post="post" />
+      </div>
+    </template>
 
+    <PostList v-else :posts="categoryPosts" />
   </div>
 </template>
 
 <script setup>
   import { onMounted } from 'vue'
   import { createClient } from '@sanity/client'
-  import { pageQuery, siteQuery } from '~~/data/queries'
+  import { pageQuery, categoryBySlugQuery, postsByCategoryQuery, siteQuery } from '~~/data/queries'
+  // A top-level slug is either a page (/object) or a category (/poster).
+  // Pages win; categories are the fallback so /poster lists every poster.
   const query = `
     { 
       ${pageQuery},
+      ${categoryBySlugQuery},
+      ${postsByCategoryQuery},
       ${siteQuery},
     }
   `
   const route = useRoute()
+  const slug = Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug
 
   const sanity = createClient({
     projectId: '1ql581l8',
@@ -50,24 +58,45 @@
   })
 
   const { data } = await useAsyncData(
-    () => `pageData:${route.params.slug}`,
-    () => sanity.fetch(query, { slug: route.params.slug }),
+    () => `pageData:${slug}`,
+    async () => {
+      try {
+        return await sanity.fetch(query, { slug, category: slug })
+      } catch (e) {
+        console.error('Sanity fetch (slug) failed:', e)
+        return { page: null, category: null, posts: [], site: {} }
+      }
+    },
     { server: true, lazy: false }
   )
-  const { page, site } = data.value
+  const {
+    page = null,
+    category = null,
+    posts: categoryPosts = [],
+    site = {},
+  } = data.value || {}
+
+  if (!page && !category) {
+    throw createError({ statusCode: 404, statusMessage: 'Page not found' })
+  }
+
 
   // Set and expose the default page background color for Post components to revert to
   const pageBgColor = useState('pageBgColor', () => page?.color?.hex || '')
   // Keep a global stack of active post colors; reset it on page mount/navigation
   const activePostColors = useState('activePostColors', () => [])
 
-  // console.log({page})
-
   useHead(() => {
     return {
-      title: `sasha cloo | ${page.title}`,
+      title: `sasha cloo | ${page ? page.title : (category?.title || slug)}`,
       meta: [
-        { hid: 'description', name: 'description', content: 'welcome to the world of cloo' },
+        {
+          hid: 'description',
+          name: 'description',
+          content: page
+            ? 'welcome to the world of cloo'
+            : (category?.description || 'welcome to the world of cloo'),
+        },
       ],
       link: {rel: 'icon', type: 'icon/x-icon', href: 'icon.png'}
     }
@@ -77,7 +106,7 @@
     // Reset any active post colors when arriving on this page
     activePostColors.value = []
     // Initialize the document background to the page color if present
-    if (pageBgColor.value) {
+    if (page && pageBgColor.value) {
       document.documentElement.style.backgroundColor = pageBgColor.value
     }
   })
@@ -126,7 +155,7 @@
       opacity: 1;
     }
   }
-  .posts {
+  .page-posts {
     @apply -mt-20;
   }
   .images {

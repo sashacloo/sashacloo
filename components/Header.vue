@@ -22,6 +22,7 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import { createClient } from '@sanity/client'
 import Button from "~/components/Button.vue";
 
 const grid = useState('grid', () => ref(false))
@@ -29,10 +30,54 @@ const blur = useState('blur', () => ref(false))
 const route = useRoute()
 const router = useRouter()
 
+const sanity = createClient({
+  projectId: '1ql581l8',
+  dataset: 'production',
+  apiVersion: '2024-10-01',
+  useCdn: true,
+  apiHost: 'https://api.sanity.io',
+})
+
+// The header renders before the page does, so it resolves the category itself
+// rather than waiting for the page to hand it over — otherwise the pill would
+// only appear after hydration. One small query, cached across navigations.
+const { data: routeNames } = await useAsyncData('routeNames', async () => {
+  try {
+    return await sanity.fetch(`{
+      'categories': *[_type == 'category']{ title, "slug": slug.current },
+      'pageSlugs': *[_type == 'page' && defined(slug.current)].slug.current
+    }`)
+  } catch (e) {
+    console.error('Sanity fetch (routeNames) failed:', e)
+    return { categories: [], pageSlugs: [] }
+  }
+}, {
+  server: true,
+  lazy: false,
+  default: () => ({ categories: [], pageSlugs: [] }),
+})
+
+// Both /poster and the older /category/poster list a category
 const currentCategory = computed(() => {
-  if (!route.path.startsWith('/category/')) return ''
-  const slug = Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug
-  return slug ? decodeURIComponent(slug) : ''
+  const segments = route.path.split('/').filter(Boolean)
+  let slug = ''
+  if (segments.length === 2 && segments[0] === 'category') {
+    slug = segments[1]
+  } else if (segments.length === 1) {
+    slug = segments[0]
+  }
+  if (!slug) return ''
+
+  const wanted = decodeURIComponent(slug).toLowerCase()
+  const { categories = [], pageSlugs = [] } = routeNames.value || {}
+
+  // A page of the same name wins the route, so it gets no category pill
+  if (segments.length === 1 && pageSlugs.some((s) => (s || '').toLowerCase() === wanted)) return ''
+
+  const match = categories.find(
+    (c) => (c.slug || '').toLowerCase() === wanted || (c.title || '').toLowerCase() === wanted
+  )
+  return match ? (match.title || wanted) : ''
 })
 
 const showEmail = ref(false);
