@@ -52,6 +52,16 @@
           {{ post.title }}
         </h2>
         <!-- <SanityContent v-if="post.body" :blocks="post.body" class="post-body" /> -->
+        <div v-if="post.categories?.length" class="post-tags">
+          <NuxtLink
+            v-for="(category, index) in post.categories" :key="index"
+            class="post-tag"
+            :to="categoryPath(category)"
+            @click.stop
+          >
+            {{ category.title }}
+          </NuxtLink>
+        </div>
     </div>
     
   </div>
@@ -85,6 +95,13 @@
     day = day < 10 ? '0' + day : day
     const strDate = year + '-' + month + '-' + day
     return strDate
+  }
+
+  // Categories have no slug set in the studio yet, so fall back to the title —
+  // the same pair the category query matches on
+  const categoryPath = (category) => {
+    const target = category?.slug || (category?.title || '').toLowerCase()
+    return target ? `/${encodeURIComponent(target)}` : '/'
   }
 
   const postWrapper = ref(null)
@@ -265,7 +282,43 @@
       :hover > & {
         opacity: 100%;
         mix-blend-mode: difference;
+        /* lift the hovered caption above the ones the other posts stack here */
+        z-index: 51;
       }
+    }
+  }
+
+  &-tags {
+    @apply flex flex-wrap gap-x-2 gap-y-1 mt-1.5;
+    /* Every post fixes a caption to the same spot, so leaving all of their tags
+       clickable would let the last one in the DOM swallow the click. Only the
+       post you are actually looking at takes it. */
+    pointer-events: none;
+  }
+
+  @media (min-width: 1024px) {
+    &:hover &-tags {
+      pointer-events: auto;
+    }
+  }
+
+  &-tag {
+    /* The caption blends with mix-blend-mode: difference, so a grey fill would
+       land on top of the grey text. An outline in currentColor keeps the pill
+       readable over whatever the post happens to be. */
+    font-size: 11px;
+    font-family: Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    color: inherit;
+    border: 1px solid currentColor;
+    border-radius: 2rem;
+    padding: 0 10px 1px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.5s;
+
+    &:hover {
+      background-color: #51ff0088;
     }
   }
 }
