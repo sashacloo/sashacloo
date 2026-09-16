@@ -1,6 +1,33 @@
 <template>
-  <div class="header z-10 fixed top-0 left-0 right-0 flex items-center justify-between bg-gray-200">
-    <Logo />
+  <div
+    class="header z-10 fixed top-0 left-0 right-0 flex items-center justify-between bg-gray-200"
+    :class="{ 'in-grid': grid }"
+  >
+    <Logo v-if="!grid" />
+
+    <div v-if="grid" class="filters">
+      <!-- desktop: every category on one line, between the feed and contact buttons -->
+      <div class="filter-row">
+        <Button
+          v-for="category in categories" :key="category.path"
+          class="filter-tag"
+          :class="{ 'is-active': category.title === currentCategory }"
+          :to="category.title === currentCategory ? '/' : category.path"
+        >
+          {{ category.title }}
+          <span v-if="category.title === currentCategory" class="filter-clear">✕</span>
+        </Button>
+      </div>
+
+      <!-- mobile: the same list behind a dropdown -->
+      <div class="filter-picker">
+        <Button class="filter-trigger" @click="filterOpen = !filterOpen">
+          {{ currentCategory || 'filter' }}
+          <span class="filter-arrow" :class="{ 'is-open': filterOpen }" />
+        </Button>
+      </div>
+    </div>
+
     <Button v-if="currentCategory" class="button-category" @click="goHome">
       <span class="category-name">{{ currentCategory }}</span>
       <span class="category-close">✕</span>
@@ -12,27 +39,121 @@
       </span>
     </Button>
     <Button @click="handleGrid" class="button-grid">
-      {{ grid ? 'list' : 'grid' }}
+      {{ grid ? 'feed' : 'grid' }}
     </Button>
     <Button @click="handleContact" class="button-contact">
       {{ contactText }}
     </Button>
   </div>
+
+  <Teleport to="body">
+    <div v-if="grid && filterOpen" class="filter-backdrop" @click="filterOpen = false" />
+    <div v-if="grid && filterOpen" class="filter-menu">
+      <Button class="filter-option" to="/" @click="filterOpen = false">all</Button>
+      <Button
+        v-for="category in categories" :key="category.path"
+        class="filter-option"
+        :class="{ 'is-active': category.title === currentCategory }"
+        :to="category.path"
+        @click="filterOpen = false"
+      >
+        {{ category.title }}
+      </Button>
+    </div>
+  </Teleport>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
+import { createClient } from '@sanity/client'
 import Button from "~/components/Button.vue";
 
-const grid = useState('grid', () => ref(false))
-const blur = useState('blur', () => ref(false))
 const route = useRoute()
 const router = useRouter()
 
+// Grid is a view preference, but it should survive a reload and travel in a
+// shared link, so ?grid mirrors it. Seeded here during setup, before the page
+// renders, so a shared link server-renders as a grid rather than flashing.
+const inUrl = () => route.query.grid !== undefined
+const grid = useState('grid', () => ref(inUrl()))
+const blur = useState('blur', () => ref(false))
+
+const syncUrl = () => {
+  const query = { ...route.query }
+  if (grid.value) query.grid = null
+  else delete query.grid
+  router.replace({ path: route.path, query, hash: route.hash })
+}
+
+const sanity = createClient({
+  projectId: '1ql581l8',
+  dataset: 'production',
+  apiVersion: '2024-10-01',
+  useCdn: true,
+  apiHost: 'https://api.sanity.io',
+})
+
+// The header renders before the page does, so it resolves the category itself
+// rather than waiting for the page to hand it over — otherwise the pill would
+// only appear after hydration. One small query, cached across navigations.
+const { data: routeNames } = await useAsyncData('routeNames', async () => {
+  try {
+    return await sanity.fetch(`{
+      'categories': *[_type == 'category' && count(*[_type == 'post' && references(^._id)]) > 0]{
+        title,
+        "slug": slug.current,
+        "count": count(*[_type == 'post' && references(^._id)])
+      } | order(count desc, title asc),
+      'pageSlugs': *[_type == 'page' && defined(slug.current)].slug.current
+    }`)
+  } catch (e) {
+    console.error('Sanity fetch (routeNames) failed:', e)
+    return { categories: [], pageSlugs: [] }
+  }
+}, {
+  server: true,
+  lazy: false,
+  default: () => ({ categories: [], pageSlugs: [] }),
+})
+
+// Both /poster and the older /category/poster list a category
 const currentCategory = computed(() => {
-  if (!route.path.startsWith('/category/')) return ''
-  const slug = Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug
-  return slug ? decodeURIComponent(slug) : ''
+  const segments = route.path.split('/').filter(Boolean)
+  let slug = ''
+  if (segments.length === 2 && segments[0] === 'category') {
+    slug = segments[1]
+  } else if (segments.length === 1) {
+    slug = segments[0]
+  }
+  if (!slug) return ''
+
+  const wanted = decodeURIComponent(slug).toLowerCase()
+  const { categories = [], pageSlugs = [] } = routeNames.value || {}
+
+  // A page of the same name wins the route, so it gets no category pill
+  if (segments.length === 1 && pageSlugs.some((s) => (s || '').toLowerCase() === wanted)) return ''
+
+  const match = categories.find(
+    (c) => (c.slug || '').toLowerCase() === wanted || (c.title || '').toLowerCase() === wanted
+  )
+  return match ? (match.title || wanted) : ''
+})
+
+// The filter list shown in grid mode: biggest categories first
+const categories = computed(() =>
+  (routeNames.value?.categories || []).map((category) => ({
+    title: category.title,
+    path: `/${encodeURIComponent(category.slug || (category.title || '').toLowerCase())}`,
+  }))
+)
+
+const filterOpen = ref(false)
+watch(() => route.path, () => { filterOpen.value = false })
+
+// Carry the view across navigation: filtering by a category from the grid
+// should land on a grid, and its URL should say so.
+watch(() => route.fullPath, () => {
+  if (grid.value !== inUrl()) syncUrl()
 })
 
 const showEmail = ref(false);
@@ -42,6 +163,7 @@ const contactText = ref("contact");
 
 const handleGrid = () => {
   grid.value = !grid.value
+  syncUrl()
   blur.value = true
 
   setTimeout(() => {
@@ -110,8 +232,103 @@ const copyToClipboard = (text) => {
            1000:-translate-x-1/2 1000:blur-[16px];
   }
   .button-category {
-    @apply left-[50vw] top-[12.5vw] 1000:top-[7vw] -translate-x-1/2;
+    @apply left-[50vw] top-[calc(12.5vw_-_50px)] 1000:top-[calc(7vw_-_50px)] -translate-x-1/2;
     z-index: 22222;
+  }
+
+  /* wrapper only — the two filter layouts place themselves */
+  .filters {
+    display: contents;
+  }
+
+  .filter-row {
+    @apply hidden 1000:flex items-center top-[2vw];
+    position: fixed;
+    /* Span exactly from the feed button's right edge to contact's left edge
+       (2.5vw inset + that button's own width), then space-evenly so the gap
+       either side of the row matches the gaps inside it — feed and contact end
+       up as evenly spaced as the tags. The two widths are the rendered labels;
+       they need revisiting if either button is renamed. */
+    left: calc(2.5vw + 55.3px);
+    right: calc(2.5vw + 71.9px);
+    justify-content: space-evenly;
+    z-index: 11111;
+  }
+
+  .filter-picker {
+    @apply 1000:hidden flex flex-col items-center top-[1.5vw] left-[50vw] -translate-x-1/2;
+    position: fixed;
+    z-index: 11111;
+  }
+
+  .filter-arrow {
+    display: inline-block;
+    margin-left: 0.45em;
+    vertical-align: middle;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid currentColor;
+    transition: transform 0.2s;
+
+    &.is-open {
+      transform: rotate(180deg);
+    }
+  }
+
+  .filter-tag,
+  .filter-option,
+  .filter-trigger {
+    transition: all 0.5s;
+
+    /* the pill itself lives inside Button, past this component's scope */
+    &.is-active :deep(.button) {
+      background-color: #00ff00;
+      color: #000000;
+    }
+    &.is-active :deep(.button:hover span) {
+      color: #000000;
+    }
+  }
+
+  .filter-tag {
+    /* Room for the ✕ is reserved rather than added on hover: the row is spaced
+       evenly, so a pill that grew on hover would shift every gap in it. */
+    &.is-active :deep(.button > span) {
+      padding-right: 28px;
+    }
+
+    .filter-clear {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      /* shrink-to-fit gave this a 37px box for a 9.91px glyph */
+      width: 10px;
+      line-height: 1;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+
+    &.is-active:hover .filter-clear {
+      opacity: 1;
+    }
+  }
+
+  &.in-grid {
+    /* the filter row and the dropdown both name the current category, and the
+       row sat 6.5px on top of this pill — clicking the active tag clears it */
+    .button-category {
+      @apply hidden;
+    }
+
+    /* the filter row takes the top line, so the credit moves out of it */
+    .button-sashaklu {
+      @apply 1000:bottom-[1.2vw] 1000:left-[1vw] 1000:top-auto 1000:translate-x-0 1000:blur-none;
+    }
   }
   .category-close {
     margin-left: 0.4em;
@@ -132,5 +349,33 @@ const copyToClipboard = (text) => {
       filter: blur(0);
     }
   }  
+}
+/* Teleported to <body>, so it escapes the header's difference blend and can
+   draw a flat panel. Outside .header, these rules live at the top level. */
+.filter-backdrop {
+  @apply 1000:hidden;
+  position: fixed;
+  inset: 0;
+  z-index: 33332;
+}
+
+.filter-option.is-active :deep(.button),
+.filter-option.is-active :deep(.button:hover span) {
+  background-color: #00ff00;
+  color: #000000;
+}
+
+.filter-menu {
+  @apply 1000:hidden flex flex-col items-center gap-y-1 px-2 py-2;
+  position: fixed;
+  top: calc(1.5vw + 34px);
+  left: 50vw;
+  transform: translateX(-50%);
+  z-index: 33333;
+  background-color: #c8c8c8;
+  border-radius: 1.4rem;
+  max-height: 70vh;
+  overflow-y: auto;
+  color: rgb(73, 73, 73);
 }
 </style>
