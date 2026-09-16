@@ -69,7 +69,7 @@ const props = defineProps({
   position: relative;
   display: block;
   transition: all 0.4s ease-out;
-  padding: 3px 17px 6px 17px;
+  padding: 4px 15px 5px;
   white-space: nowrap;
   user-select: none;
 }
