@@ -15,6 +15,7 @@
           :to="category.title === currentCategory ? '/' : category.path"
         >
           {{ category.title }}
+          <span v-if="category.title === currentCategory" class="filter-clear">✕</span>
         </Button>
       </div>
 
@@ -98,7 +99,7 @@ const sanity = createClient({
 const { data: routeNames } = await useAsyncData('routeNames', async () => {
   try {
     return await sanity.fetch(`{
-      'categories': *[_type == 'category']{
+      'categories': *[_type == 'category' && count(*[_type == 'post' && references(^._id)]) > 0]{
         title,
         "slug": slug.current,
         "count": count(*[_type == 'post' && references(^._id)])
@@ -241,11 +242,16 @@ const copyToClipboard = (text) => {
   }
 
   .filter-row {
-    @apply hidden 1000:flex items-center justify-between top-[2vw];
+    @apply hidden 1000:flex items-center top-[2vw];
     position: fixed;
-    /* clear of the feed button on the left and contact on the right */
-    left: calc(2.5vw + 75px);
-    right: calc(2.5vw + 95px);
+    /* Span exactly from the feed button's right edge to contact's left edge
+       (2.5vw inset + that button's own width), then space-evenly so the gap
+       either side of the row matches the gaps inside it — feed and contact end
+       up as evenly spaced as the tags. The two widths are the rendered labels;
+       they need revisiting if either button is renamed. */
+    left: calc(2.5vw + 55.3px);
+    right: calc(2.5vw + 71.9px);
+    justify-content: space-evenly;
     z-index: 11111;
   }
 
@@ -283,6 +289,32 @@ const copyToClipboard = (text) => {
     }
     &.is-active :deep(.button:hover span) {
       color: #000000;
+    }
+  }
+
+  .filter-tag {
+    /* Room for the ✕ is reserved rather than added on hover: the row is spaced
+       evenly, so a pill that grew on hover would shift every gap in it. */
+    &.is-active :deep(.button > span) {
+      padding-right: 28px;
+    }
+
+    .filter-clear {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      /* shrink-to-fit gave this a 37px box for a 9.91px glyph */
+      width: 10px;
+      line-height: 1;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+
+    &.is-active:hover .filter-clear {
+      opacity: 1;
     }
   }
 
