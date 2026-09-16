@@ -34,6 +34,8 @@
   }
   &.in-grid {
     @apply grid grid-cols-4 1000:grid-cols-5;
+    /* clear the fixed header, which the first row otherwise ran straight into */
+    padding-top: 50px;
     scroll-snap-type: none;
     max-height: none;
     overflow-y: visible;
