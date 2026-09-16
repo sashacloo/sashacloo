@@ -34,8 +34,9 @@
   }
   &.in-grid {
     @apply grid grid-cols-4 1000:grid-cols-5;
-    /* clear the fixed header, which the first row otherwise ran straight into */
-    padding-top: 50px;
+    /* 50px below the header row, not 50px down the page — the header is fixed
+       and ends at its own top offset plus the 28.5px button height */
+    @apply pt-[calc(1.5vw_+_78.5px)] 1000:pt-[calc(2vw_+_78.5px)];
     scroll-snap-type: none;
     max-height: none;
     overflow-y: visible;
